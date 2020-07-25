@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api';
-import Map from '../components/map';
-import CustomizedTables from '../components/table';
+import { Line } from 'react-chartjs-2';
 
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { Line } from 'react-chartjs-2';
-
+import api from '../api';
+import Map from '../components/map';
+import CustomizedTables from '../components/table';
 import Loading from '../components/loading'
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+}));
 
 const activeChart = (place, realData, predictionData, property) => {
   function scaleYaxis(max_elem) {
@@ -136,7 +147,11 @@ const activeChart = (place, realData, predictionData, property) => {
   }
 }
 
+
+
 const Dashboard = () => {
+  const classes = useStyles();
+
   const [ loaded, setLoaded ] = useState(false);
 
   const [ country, setCountry ] = useState('Russia');
@@ -147,6 +162,11 @@ const Dashboard = () => {
 
   const [ pastData, setPastData ] = useState([]);
   const [ predictionData, setPredictionData ] = useState([]);
+
+  const handleChange = (event) => {
+    setRegion();
+    setCountry(event.target.value);
+  };
 
   const fetchCountry = async (country, regions) => {
     const pastPromises = Promise.all(regions
@@ -160,14 +180,19 @@ const Dashboard = () => {
     );
 
     const [pastData, predictionData] = (await Promise.all([pastPromises, predictionPromises]))
-    .map(array => 
-      array
+    .map(array => array
       .map(result => Array.isArray(result.data) ? result.data : Object.values(result.data)[0])
+      // Limpiando array
+      .filter(result => {
+        return Array.isArray(result) && result.length > 0;
+      })
+      // Remover repetidos
+      .map(day => {
+        return day.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
+      })
+      // Sumar todas las regiones de rusia
       .reduce((accumulator, currentValue) => accumulator
         .map((item, index) => {
-          if(!Array.isArray(item) || item.length === 0) {
-            return item;
-          }
           return {
             date: item.date,
             active: item.active + currentValue[index].active,
@@ -186,13 +211,14 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchGlobalData = async () => {
       try {
-        const { data: { availableCountries: countries } } = await api.getCountries();
-        const { data: { regionsInRussia: regions } } = await api.getRegions(country);
-
-        setCountries(countries);
+        //const { data: { availableCountries: countries } } = await api.getCountries();
+        const regions = Object.values((await api.getRegions(country)).data)[0];
+        // Por ahora solo son dos
+        //setCountries(countries);
+        setCountries(['Russia', 'India'])
         setRegions(regions);
 
-        fetchCountry(country, regions);
+        await fetchCountry(country, regions);
       } catch (error) {
         console.log(error);
       }
@@ -205,22 +231,24 @@ const Dashboard = () => {
     setLoaded(false);
     const fetchData = async () => {
       if (region) {
-        const pastData = (await api.getPast(country, region)).data;
-        const predictionData = Object.values((await api.getPrediction(country, region)).data)[0];
-        console.log(region);
-        console.log(pastData);
-        console.log(predictionData);
-        
-        setPastData(Array.isArray(pastData) ? pastData : []);
-        setPredictionData(Array.isArray(predictionData) ? predictionData : []);
+        let pastData = (await api.getPast(country, region)).data;
+        pastData = Array.isArray(pastData) ? pastData : [];
+        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
+        let predictionData = Object.values((await api.getPrediction(country, region)).data)[0];
+        predictionData = Array.isArray(predictionData) ? predictionData : [];
+        predictionData = predictionData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+        setPastData(pastData);
+        setPredictionData(predictionData);
         setLoaded(true);
       } else if(regions.length > 0) {
+        const regions = Object.values((await api.getRegions(country)).data)[0];
+        setRegions(regions);
         fetchCountry(country, regions);
       }
     }
 
     fetchData();
-  }, [region]);
+  }, [country, region]);
 
   const regionHandler = (state) => {
     setRegion(state);
@@ -230,7 +258,7 @@ const Dashboard = () => {
     if(region) {
       return region;
     }
-    return 'Russia'
+    return country
   }
 
   const lineInfected = activeChart(title(), pastData, predictionData, 'active');
@@ -248,11 +276,27 @@ const Dashboard = () => {
       </Grid>
       <Grid item xs={12} md={5} style={{padding: '5px'}}>
         <Paper style={{ height: '100%' }}>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="country-label">Country</InputLabel>
+            <Select
+              id="country"
+              labelId="country-label"
+              value={country}
+              onChange={handleChange}
+              label="Country"
+            >
+              {
+                countries.map((item => {
+                  return <MenuItem key={item} value={item}>{item}</MenuItem>
+                }))
+              }
+            </Select>
+          </FormControl>
           <Typography variant="h3" align="center" style={{paddingTop: '25px', paddingBottom: '25px'}}>
             {title()}
           </Typography>
           <Map 
-            region={region}
+            country={country}
             regionHandler={regionHandler} 
           />
         </Paper>

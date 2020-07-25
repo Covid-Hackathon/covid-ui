@@ -10,6 +10,7 @@ const Loading = (props) => {
     if(loaded) {
         return children;
     }
+    
 
     return <Grid
                 container

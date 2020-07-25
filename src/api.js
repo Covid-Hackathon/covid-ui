@@ -9,7 +9,11 @@ const getCountries = async () => {
 }
 
 const getRegions = async (country) => {
-    return await api.get(`/countries/${country}/regions`);
+    let nameDivision = 'regions';
+    if(country === 'India') {
+        nameDivision = 'states'
+    }
+    return await api.get(`/countries/${country}/${nameDivision}`);
 }
 
 const getPrediction = async (country, region) => {
