@@ -36,7 +36,6 @@ const Map = (props) => {
     const mapRef = useRef();
 
     useEffect(() => {
-        
         const drawMap = async () => {
             const mapJson = await d3.json(`/topojson/countries/${countries[country].map}`);
 
