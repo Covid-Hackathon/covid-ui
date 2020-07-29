@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -163,6 +165,8 @@ const Dashboard = () => {
   const [ pastData, setPastData ] = useState([]);
   const [ predictionData, setPredictionData ] = useState([]);
 
+  const [ searchBar, setSearchBar ] = useState(null); 
+
   const handleChange = (event) => {
     setRegion();
     setCountry(event.target.value);
@@ -267,7 +271,7 @@ const Dashboard = () => {
   return (
     <Grid container>
       <Grid item xs={12} md={3} style={{padding: '5px'}}>
-      <Paper style={{ height: '100%' }}>
+        <Paper style={{ height: '100%' }}>
           <Loading loaded={loaded}>
             <CustomizedTables title={title()} data={pastData} />
             <CustomizedTables title={`Forecasted ${title()}`} data={predictionData} />
@@ -278,25 +282,44 @@ const Dashboard = () => {
         <Paper style={{ height: '100%' }}>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="country-label">Country</InputLabel>
-            <Select
-              id="country"
-              labelId="country-label"
-              value={country}
-              onChange={handleChange}
-              label="Country"
-            >
-              {
-                countries.map((item => {
-                  return <MenuItem key={item} value={item}>{item}</MenuItem>
-                }))
-              }
-            </Select>
+            <Grid container>
+              <Grid >
+                <Select
+                  id="country"
+                  labelId="country-label"
+                  value={country}
+                  onChange={handleChange}
+                  label="Country"
+                >
+                  {
+                    countries.map((item => {
+                      return <MenuItem key={item} value={item}>{item}</MenuItem>
+                    }))
+                  }
+                </Select>
+              </Grid>
+              <Grid>
+                <Autocomplete
+                  options={regions}
+                  getOptionLabel={(option) => option}
+                  onInputChange={(event, newInputValue) => {
+                    setSearchBar(newInputValue);
+                    if(regions.includes(newInputValue)) {
+                      setRegion(newInputValue);
+                    }
+                  }}
+                  style={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
+                />
+              </Grid>
+            </Grid>
           </FormControl>
           <Typography variant="h3" align="center" style={{paddingTop: '25px', paddingBottom: '25px'}}>
             {title()}
           </Typography>
           <Map 
             country={country}
+            region={region}
             regionHandler={regionHandler} 
           />
         </Paper>

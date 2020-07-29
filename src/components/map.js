@@ -29,6 +29,7 @@ const countries = {
 const Map = (props) => {
     const {
         country,
+        region,
         regionHandler,
     } = props;
 
@@ -61,7 +62,12 @@ const Map = (props) => {
                     .enter().append("path")
                     .attr("class", "state")
                     .attr("d", path)
-                    .style("fill", "#fff8ee")
+                    .style("fill", function(item) {
+                        if(item.properties[countries[country].propertyRegion] === region) {
+                            return "red";
+                        }
+                        return "#fff8ee";
+                    })
                     .style("stroke", "#3a403d")
                     .style("stroke-width", "1px")
                     .attr("cursor", "pointer")
@@ -115,7 +121,7 @@ const Map = (props) => {
         }
 
         drawMap();
-    }, [country]);
+    }, [country, region]);
 
     return <div ref={mapRef} style={{position: 'relative', width: '100%', height:'100%'}}></div>
 }
