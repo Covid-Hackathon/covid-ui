@@ -215,7 +215,7 @@ const Dashboard = () => {
         const regions = Object.values((await api.getRegions(country)).data)[0];
         // Por ahora solo son dos
         //setCountries(countries);
-        setCountries(['Russia', 'India'])
+        setCountries(['Russia', 'India', 'US']);
         setRegions(regions);
 
         await fetchCountry(country, regions);

@@ -9,9 +9,9 @@ const getCountries = async () => {
 }
 
 const getRegions = async (country) => {
-    let nameDivision = 'regions';
-    if(country === 'India') {
-        nameDivision = 'states'
+    let nameDivision = 'states';
+    if(['Russia'].includes(country)) {
+        nameDivision = 'regions'
     }
     return await api.get(`/countries/${country}/${nameDivision}`);
 }

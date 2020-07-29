@@ -17,6 +17,13 @@ const countries = {
         objectName: 'IND_adm1',
         propertyRegion: 'NAME_1'
     },
+    US: {
+        map: 'united-states/us-albers.json',
+        width: 960,
+        height: 500,
+        objectName: 'us',
+        propertyRegion: 'name'
+    },
   }
 
 const Map = (props) => {
