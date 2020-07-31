@@ -31,6 +31,7 @@ const Map = (props) => {
         country,
         region,
         regionHandler,
+        heatFactors
     } = props;
 
     const mapRef = useRef();
@@ -38,6 +39,10 @@ const Map = (props) => {
     useEffect(() => {
         const drawMap = async () => {
             const mapJson = await d3.json(`/topojson/countries/${countries[country].map}`);
+            const color = d3
+            .scaleThreshold()
+            .domain([0, 1, 5, 10, 15, 30, 50, 100])
+            .range(d3.schemeOrRd[8]);
 
             function centerZoom(data, objectName, projection, path, width, height) {
                 const o = topojson.mesh(data, data.objects[objectName], function(a, b) { return a === b; });
@@ -62,39 +67,49 @@ const Map = (props) => {
                     .attr("class", "state")
                     .attr("d", path)
                     .style("fill", function(item) {
-                        if(item.properties[countries[country].propertyRegion] === region) {
-                            return "red";
+                        const currentRegion = item.properties[countries[country].propertyRegion];
+         
+                        if(currentRegion === region) {
+                            return "darkslategray";
+                        } else if (heatFactors.hasOwnProperty(currentRegion)) {
+                            const percentage = heatFactors[currentRegion];
+                            return color(percentage);
+                        } else {
+                            return color(0);
                         }
-                        return "#fff8ee";
                     })
                     .style("stroke", "#3a403d")
                     .style("stroke-width", "1px")
                     .attr("cursor", "pointer")
                     .on("click", function (item) {
-                        if(d3.select(this).style("fill") === 'red') {
-                            d3.select(this).attr("r", 5.5).style("fill", "#fff8ee");
+                        const currentRegion = item.properties[countries[country].propertyRegion];
+                        if(d3.select(this).style("fill") === 'darkslategray') {
                             regionHandler(undefined);
                         } else {
-                            g.selectAll(".state").attr("r", 5.5).style("fill", "#fff8ee");
-                            d3.select(this).attr("r", 10).style("fill", "red");;
-                            regionHandler(item.properties[countries[country].propertyRegion]);
+                            d3.select(this).attr("r", 10).style("fill", "darkslategray");
+                            regionHandler(currentRegion);
                         }
                     })
-                    .on("mouseover", function () {
-                        if(d3.select(this).style("fill") !== 'red') {
+                    .on("mouseover", function (item) {
+                        if(d3.select(this).style("fill") !== 'darkslategray') {
                             d3.select(this).attr("r", 10).style("fill", "gray");
                         }
                     })
-                    .on("mouseout", function () {
-                        if(d3.select(this).style("fill") !== 'red') {
-                            d3.select(this).attr("r", 5.5).style("fill", "#fff8ee");
+                    .on("mouseout", function (item) {
+                        if(d3.select(this).style("fill") !== 'darkslategray') {
+                            const currentRegion = item.properties[countries[country].propertyRegion];
+                            let currentColor = color(0);
+                            if(heatFactors.hasOwnProperty(currentRegion)) {
+                                const percentage = heatFactors[currentRegion];
+                                currentColor = color(percentage);
+                            } 
+                            d3.select(this).attr("r", 10).style("fill", currentColor);
                         }
                         
                     });
           
                 return states;
             }
-            
             
             const w = countries[country].width;
             const h = countries[country].height;
@@ -120,7 +135,7 @@ const Map = (props) => {
         }
 
         drawMap();
-    }, [country, region]);
+    }, [country, region, heatFactors]);
 
     return <div ref={mapRef} style={{position: 'relative', width: '100%', height:'100%'}}></div>
 }

@@ -24,10 +24,15 @@ const getPast = async (country, region) => {
     return await api.get(`/countries/${country}/past/${region}`);
 }
 
+const getHeatFactors = async (country) => {
+    return await api.get(`/countries/${country}/heatfactors`);
+}
+
 export default {
     getCountries,
     getRegions,
     getPast,
-    getPrediction
+    getPrediction,
+    getHeatFactors
 }
 

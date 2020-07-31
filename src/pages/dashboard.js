@@ -165,7 +165,8 @@ const Dashboard = () => {
   const [ pastData, setPastData ] = useState([]);
   const [ predictionData, setPredictionData ] = useState([]);
 
-  const [ searchBar, setSearchBar ] = useState(null); 
+  const [ , setSearchBar ] = useState(null); 
+  const [ heatFactorData, setHeatFactorData ] = useState({});
 
   const handleChange = (event) => {
     setRegion();
@@ -221,7 +222,6 @@ const Dashboard = () => {
         //setCountries(countries);
         setCountries(['Russia', 'India', 'US']);
         setRegions(regions);
-
         await fetchCountry(country, regions);
       } catch (error) {
         console.log(error);
@@ -230,6 +230,17 @@ const Dashboard = () => {
 
     fetchGlobalData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let result = await api.getHeatFactors(country);
+      // heatFactors
+      const heatFactor = result.data.hasOwnProperty('heatFactors') ? result.data.heatFactors : result.data;
+      setHeatFactorData(heatFactor);
+    }
+
+    fetchData();
+  }, [country]);
 
   useEffect(() => {
     setLoaded(false);
@@ -318,6 +329,7 @@ const Dashboard = () => {
             {title()}
           </Typography>
           <Map 
+            heatFactors={heatFactorData}
             country={country}
             region={region}
             regionHandler={regionHandler} 
