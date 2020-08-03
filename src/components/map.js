@@ -11,11 +11,11 @@ const countries = {
       propertyRegion: 'en_native_nam'
     },
     India: {
-        map: 'india/india-states.json',
+        map: 'india/india.json',
         width: 1000,
         height: 1000,
-        objectName: 'IND_adm1',
-        propertyRegion: 'NAME_1'
+        objectName: 'india',
+        propertyRegion: 'st_nm'
     },
     US: {
         map: 'united-states/us-albers.json',
