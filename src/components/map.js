@@ -4,25 +4,25 @@ import * as topojson from "topojson-client";
 
 const countries = {
     Russia: {
-      map: 'russia/russia-region.json',
-      width: 975,
-      height: 610,
-      objectName: 'collection',
-      propertyRegion: 'en_native_nam'
+        map: 'russia/russia-region.json',
+        width: 975,
+        height: 610,
+        objectName: 'collection',
+        propertyName: 'en_native_nam'
     },
     India: {
         map: 'india/india.json',
         width: 1000,
         height: 1000,
         objectName: 'india',
-        propertyRegion: 'st_nm'
+        propertyName: 'st_nm'
     },
     US: {
         map: 'united-states/us-albers.json',
         width: 960,
         height: 500,
         objectName: 'us',
-        propertyRegion: 'name'
+        propertyName: 'name'
     },
   }
 
@@ -31,14 +31,28 @@ const Map = (props) => {
         country,
         region,
         regionHandler,
-        heatFactors
+        heatFactors,
+        districtHandler,
+        district
     } = props;
 
     const mapRef = useRef();
 
     useEffect(() => {
         const drawMap = async () => {
-            const mapJson = await d3.json(`/topojson/countries/${countries[country].map}`);
+            let pathFile = countries[country].map;
+            let w = countries[country].width;
+            let h = countries[country].height;
+            let objectName = countries[country].objectName;
+            let propertyName = countries[country].propertyName;
+
+            if(country === 'India' && region) {
+                const fileRegion = region.toLowerCase().replaceAll(' ', '')
+                pathFile = `india/states/${fileRegion}.json`;
+                objectName = fileRegion;
+                propertyName = 'district';
+            }
+            const mapJson = await d3.json(`/topojson/countries/${pathFile}`);
             const color = d3
             .scaleThreshold()
             .domain([0, 1, 5, 10, 15, 30, 50, 100])
@@ -67,12 +81,13 @@ const Map = (props) => {
                     .attr("class", "state")
                     .attr("d", path)
                     .style("fill", function(item) {
-                        const currentRegion = item.properties[countries[country].propertyRegion];
-         
-                        if(currentRegion === region) {
+                        const currentArea = item.properties[propertyName];
+                        const chosenArea = (country === 'India' && region) ? district: region;
+
+                        if(currentArea === chosenArea) {
                             return "darkslategray";
-                        } else if (heatFactors.hasOwnProperty(currentRegion)) {
-                            const percentage = heatFactors[currentRegion];
+                        } else if (heatFactors.hasOwnProperty(currentArea)) {
+                            const percentage = heatFactors[currentArea];
                             return color(percentage);
                         } else {
                             return color(0);
@@ -82,12 +97,21 @@ const Map = (props) => {
                     .style("stroke-width", "1px")
                     .attr("cursor", "pointer")
                     .on("click", function (item) {
-                        const currentRegion = item.properties[countries[country].propertyRegion];
+                        const currentArea = item.properties[propertyName];
                         if(d3.select(this).style("fill") === 'darkslategray') {
-                            regionHandler(undefined);
+                            if(country === 'India' && region) {
+                                console.log('District');
+                                districtHandler(undefined);
+                            } else {
+                                regionHandler(undefined);
+                            }
                         } else {
                             d3.select(this).attr("r", 10).style("fill", "darkslategray");
-                            regionHandler(currentRegion);
+                            if(country === 'India' && region) {
+                                districtHandler(currentArea);
+                            } else {
+                                regionHandler(currentArea);
+                            }
                         }
                     })
                     .on("mouseover", function (item) {
@@ -97,24 +121,19 @@ const Map = (props) => {
                     })
                     .on("mouseout", function (item) {
                         if(d3.select(this).style("fill") !== 'darkslategray') {
-                            const currentRegion = item.properties[countries[country].propertyRegion];
+                            const currentArea = item.properties[propertyName];
                             let currentColor = color(0);
-                            if(heatFactors.hasOwnProperty(currentRegion)) {
-                                const percentage = heatFactors[currentRegion];
+                            if(heatFactors.hasOwnProperty(currentArea)) {
+                                const percentage = heatFactors[currentArea];
                                 currentColor = color(percentage);
                             } 
                             d3.select(this).attr("r", 10).style("fill", currentColor);
                         }
-                        
                     });
           
                 return states;
             }
             
-            const w = countries[country].width;
-            const h = countries[country].height;
-            const objectName = countries[country].objectName;
-
             const projection = d3
               .geoMercator()
               .rotate([-11, 0]);
@@ -135,7 +154,7 @@ const Map = (props) => {
         }
 
         drawMap();
-    }, [country, region, heatFactors]);
+    }, [country, region, district, heatFactors]);
 
     return <div ref={mapRef} style={{position: 'relative', width: '100%', height:'100%'}}></div>
 }

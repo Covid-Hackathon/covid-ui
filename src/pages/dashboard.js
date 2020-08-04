@@ -10,6 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
 import api from '../api';
@@ -156,11 +157,14 @@ const Dashboard = () => {
 
   const [ loaded, setLoaded ] = useState(false);
 
-  const [ country, setCountry ] = useState('Russia');
+  const [ country, setCountry ] = useState('India');
   const [ countries, setCountries ] = useState([]);
 
   const [ regions, setRegions ] = useState([]);
   const [ region, setRegion ] = useState();
+
+  const [ districts, setDistricts ] = useState([]);
+  const [ district, setDistrict ] = useState();
 
   const [ pastData, setPastData ] = useState([]);
   const [ predictionData, setPredictionData ] = useState([]);
@@ -169,6 +173,7 @@ const Dashboard = () => {
   const [ heatFactorData, setHeatFactorData ] = useState({});
 
   const handleChange = (event) => {
+    setDistrict();
     setRegion();
     setCountry(event.target.value);
   };
@@ -176,12 +181,12 @@ const Dashboard = () => {
   const fetchCountry = async (country, regions) => {
     const pastPromises = Promise.all(regions
       .filter(region => region !== country)
-      .map(region => api.getPast(country, region))
+      .map(region => api.getPastRegion(country, region))
     );
 
     const predictionPromises = Promise.all(regions
       .filter(region => region !== country)
-      .map(region => api.getPrediction(country, region))
+      .map(region => api.getPredictionRegion(country, region))
     );
 
     const [pastData, predictionData] = (await Promise.all([pastPromises, predictionPromises]))
@@ -218,7 +223,7 @@ const Dashboard = () => {
       try {
         //const { data: { availableCountries: countries } } = await api.getCountries();
         const regions = Object.values((await api.getRegions(country)).data)[0];
-        // Por ahora solo son dos
+        // Por ahora solo son tres paises
         //setCountries(countries);
         setCountries(['Russia', 'India', 'US']);
         setRegions(regions);
@@ -233,8 +238,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let result = await api.getHeatFactors(country);
-      // heatFactors
+      let result = await api.getHeatFactorsCountry(country);
       const heatFactor = result.data.hasOwnProperty('heatFactors') ? result.data.heatFactors : result.data;
       setHeatFactorData(heatFactor);
     }
@@ -243,15 +247,48 @@ const Dashboard = () => {
   }, [country]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      // Caso particular India
+      if(country === 'India') {
+        let result;
+        if(region) {
+          result = await api.getHeatFactorsRegion(country, region);
+        } else {
+          result = await api.getHeatFactorsCountry(country);
+        }
+        const heatFactor = result.data.hasOwnProperty('heatFactors') ? result.data.heatFactors : result.data;
+        setHeatFactorData(heatFactor);
+      }
+    }
+
+    fetchData();
+  }, [region]);
+
+  useEffect(() => {
     setLoaded(false);
     const fetchData = async () => {
-      if (region) {
-        let pastData = (await api.getPast(country, region)).data;
+      if(district) {
+        let pastData = (await api.getPastDistrict(country, district)).data;
         pastData = Array.isArray(pastData) ? pastData : [];
-        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
-        let predictionData = Object.values((await api.getPrediction(country, region)).data)[0];
+        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+
+        let predictionData = Object.values((await api.getPredictionDistrict(country, district)).data)[0];
         predictionData = Array.isArray(predictionData) ? predictionData : [];
         predictionData = predictionData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+        
+        setPastData(pastData);
+        setPredictionData(predictionData);
+        setLoaded(true);
+      } else if (region) {
+        let pastData = (await api.getPastRegion(country, region)).data;
+        pastData = Array.isArray(pastData) ? pastData : [];
+        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+
+        let predictionData = Object.values((await api.getPredictionRegion(country, region)).data)[0];
+        predictionData = Array.isArray(predictionData) ? predictionData : [];
+        predictionData = predictionData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+
+        setDistricts((await api.getDistricts(country, region)).data);
         setPastData(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
@@ -263,14 +300,22 @@ const Dashboard = () => {
     }
 
     fetchData();
-  }, [country, region]);
+  }, [country, region, district]);
 
-  const regionHandler = (state) => {
-    setRegion(state);
+  const regionHandler = (region) => {
+    setDistrict();
+    setRegion(region);
+  }
+
+
+  const districtHandler = (district) => {
+    setDistrict(district);
   }
 
   const title = () => {
-    if(region) {
+    if(district) {
+      return district;
+    } else if(region) {
       return region;
     }
     return country
@@ -323,6 +368,11 @@ const Dashboard = () => {
                   renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
                 />
               </Grid>
+              { (country === 'India' && region) &&
+                <Grid>
+                  <Button onClick={regionHandler.bind(this, undefined)} style={{ height: 56 }} variant="outlined">Back</Button>
+                </Grid>
+              }
             </Grid>
           </FormControl>
           <Typography variant="h3" align="center" style={{paddingTop: '25px', paddingBottom: '25px'}}>
@@ -333,6 +383,8 @@ const Dashboard = () => {
             country={country}
             region={region}
             regionHandler={regionHandler} 
+            district={district}
+            districtHandler={districtHandler}
           />
         </Paper>
       </Grid>
