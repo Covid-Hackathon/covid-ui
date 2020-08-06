@@ -329,8 +329,8 @@ const Dashboard = () => {
       <Grid item xs={12} md={3} style={{padding: '5px'}}>
         <Paper style={{ height: '100%' }}>
           <Loading loaded={loaded}>
-            <CustomizedTables title={title()} data={pastData} />
-            <CustomizedTables title={`Forecasted ${title()}`} data={predictionData} />
+            <CustomizedTables showActive={country !== 'US'} title={title()} data={pastData} />
+            <CustomizedTables showActive={country !== 'US'} title={`Forecasted ${title()}`} data={predictionData} />
           </Loading>
         </Paper>
       </Grid>
@@ -391,9 +391,12 @@ const Dashboard = () => {
       <Grid item xs={12} md={4} style={{padding: '5px'}}>
         <Paper style={{ height: '100%' }}>
           <Loading loaded={loaded}>
-            <Grid item xs={12} style={{height: '450px'}}>
-              <Line data={lineInfected.data} options={lineInfected.options} />
-            </Grid>
+            {
+              (country !== 'US') &&
+              <Grid item xs={12} style={{height: '450px'}}>
+                <Line data={lineInfected.data} options={lineInfected.options} />
+              </Grid>
+            }
             <Grid item xs={12} style={{height: '450px'}}>
               <Line data={lineDeaths.data} options={lineDeaths.options}/>
             </Grid>

@@ -41,6 +41,12 @@ const StyledTableCell = withStyles((theme) => ({
   });
   
 const CustomizedTables = (props) => {
+    const {
+      showConfirmed = true,
+      showActive = true,
+      showDecesed = true
+    } = props;
+
     const classes = useStyles();
     const confirmedOn = props.data.reduce((accumulator, currentValue) => {
       return accumulator || ((currentValue.hasOwnProperty('confirmed') && !isNaN(currentValue.confirmed)));
@@ -63,9 +69,9 @@ const CustomizedTables = (props) => {
             }
             <TableRow>
               <StyledTableCell align="center">Date</StyledTableCell>
-              { confirmedOn && <StyledTableCell align="center">Confirmed</StyledTableCell> }
-              { activeOn && <StyledTableCell align="center">Active</StyledTableCell> }
-              { deceasedOn && <StyledTableCell align="center">Deceased</StyledTableCell> }
+              { showConfirmed && confirmedOn && <StyledTableCell align="center">Confirmed</StyledTableCell> }
+              { showActive && activeOn && <StyledTableCell align="center">Active</StyledTableCell> }
+              { showDecesed && deceasedOn && <StyledTableCell align="center">Deceased</StyledTableCell> }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -75,9 +81,9 @@ const CustomizedTables = (props) => {
                 return (
                     <StyledTableRow key={row.date}>
                         <StyledTableCell align="center" component="th" scope="row">{row.date}</StyledTableCell>
-                        { confirmedOn && <StyledTableCell align="center" component="th" scope="row">{row.confirmed}</StyledTableCell> }
-                        { activeOn && <StyledTableCell align="center" component="th" scope="row">{row.active}</StyledTableCell> }
-                        { deceasedOn && <StyledTableCell align="center" component="th" scope="row">{row.deceased}</StyledTableCell> }
+                        { showConfirmed && confirmedOn && <StyledTableCell align="center" component="th" scope="row">{row.confirmed}</StyledTableCell> }
+                        { showActive && activeOn && <StyledTableCell align="center" component="th" scope="row">{row.active}</StyledTableCell> }
+                        { showDecesed && deceasedOn && <StyledTableCell align="center" component="th" scope="row">{row.deceased}</StyledTableCell> }
                     </StyledTableRow>
                 );
             })}
