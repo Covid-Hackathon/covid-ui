@@ -169,7 +169,8 @@ const Dashboard = () => {
   const [ pastData, setPastData ] = useState([]);
   const [ predictionData, setPredictionData ] = useState([]);
 
-  const [ , setSearchBar ] = useState(null); 
+  const [ , setSearchBarRegion ] = useState(null); 
+  const [ , setSearchBarDistrict] = useState(null); 
   const [ heatFactorData, setHeatFactorData ] = useState({});
 
   const handleChange = (event) => {
@@ -294,6 +295,7 @@ const Dashboard = () => {
         setLoaded(true);
       } else if(regions.length > 0) {
         const regions = Object.values((await api.getRegions(country)).data)[0];
+        setDistricts([]);
         setRegions(regions);
         fetchCountry(country, regions);
       }
@@ -359,15 +361,32 @@ const Dashboard = () => {
                   options={regions}
                   getOptionLabel={(option) => option}
                   onInputChange={(event, newInputValue) => {
-                    setSearchBar(newInputValue);
+                    setSearchBarRegion(newInputValue);
                     if(regions.includes(newInputValue)) {
+                      setDistrict();
                       setRegion(newInputValue);
                     }
                   }}
-                  style={{ width: 300 }}
+                  style={{ width: 200 }}
                   renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
                 />
               </Grid>
+              { districts.length > 0 && 
+              <Grid>
+                <Autocomplete
+                      options={districts}
+                      getOptionLabel={(option) => option}
+                      onInputChange={(event, newInputValue) => {
+                        setSearchBarDistrict(newInputValue);
+                        if(districts.includes(newInputValue)) {
+                          setDistrict(newInputValue);
+                        }
+                      }}
+                      style={{ width: 200 }}
+                      renderInput={(params) => <TextField {...params} label={'District'} variant="outlined" />}
+                  />
+              </Grid>
+              }
               { (country === 'India' && region) &&
                 <Grid>
                   <Button onClick={regionHandler.bind(this, undefined)} style={{ height: 56 }} variant="outlined">Back</Button>
