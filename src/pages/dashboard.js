@@ -151,7 +151,6 @@ const activeChart = (place, realData, predictionData, property) => {
 }
 
 
-
 const Dashboard = () => {
   const classes = useStyles();
 
@@ -190,28 +189,62 @@ const Dashboard = () => {
       .map(region => api.getPredictionRegion(country, region))
     );
 
-    const [pastData, predictionData] = (await Promise.all([pastPromises, predictionPromises]))
-    .map(array => array
-      .map(result => Array.isArray(result.data) ? result.data : Object.values(result.data)[0])
-      // Limpiando array
-      .filter(result => {
-        return Array.isArray(result) && result.length > 0;
+    let  [pastData, predictionData] = await Promise.all([pastPromises, predictionPromises])
+
+  pastData = pastData.map(result => Array.isArray(result.data) ? result.data : Object.values(result.data)[0])
+    // Limpiando array
+    .filter(result => {
+      return Array.isArray(result) && result.length > 0;
+    })
+    // Remover repetidos
+    .map(day => {
+      return day.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
+    })
+    // Sumar todas las regiones de rusia
+    .reduce((accumulator, currentValue) => accumulator
+      .map((item, index) => {
+        return {
+          date: item.date,
+          active: item.active + currentValue[index].active,
+          confirmed: item.confirmed + currentValue[index].confirmed,
+          deaths: item.deaths + currentValue[index].deaths
+        }
       })
-      // Remover repetidos
-      .map(day => {
-        return day.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
-      })
-      // Sumar todas las regiones de rusia
-      .reduce((accumulator, currentValue) => accumulator
-        .map((item, index) => {
+    );
+
+    predictionData = predictionData.map(result => Array.isArray(result.data) ? result.data : Object.values(result.data)[0])
+    // Limpiando array
+    .filter(item => {
+      return Array.isArray(item) && item.length > 0;
+    })
+    // Cambiando formato para que funcione con lo implementado anteriormente
+    .map(result => {
+      return result
+      .reduce((accumulator, currentValue) => {
+        const week = +Object.keys(currentValue)[0].split('-')[1];
+        const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
           return {
-            date: item.date,
-            active: item.active + currentValue[index].active,
-            confirmed: item.confirmed + currentValue[index].confirmed,
-            deaths: item.deaths + currentValue[index].deaths
+            ...day,
+            week
           }
-        })
-      )
+        });
+        return [...accumulator, ...days];
+      }, []);
+    })
+    // Remover repetidos
+    .map(day => {
+      return day.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
+    })
+    // Sumar todas las regiones de rusia
+    .reduce((accumulator, currentValue) => accumulator
+      .map((item, index) => {
+        return {
+          date: item.date,
+          active: item.active + currentValue[index].active,
+          confirmed: item.confirmed + currentValue[index].confirmed,
+          deaths: item.deaths + currentValue[index].deaths
+        }
+      })
     );
 
     setLoaded(true);
@@ -274,9 +307,22 @@ const Dashboard = () => {
         pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
 
         let predictionData = Object.values((await api.getPredictionDistrict(country, district)).data)[0];
-        predictionData = Array.isArray(predictionData) ? predictionData : [];
-        predictionData = predictionData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
-        
+        if(Array.isArray(predictionData) && predictionData.length > 0) {
+          predictionData = predictionData
+          .reduce((accumulator, currentValue) => {
+            const week = +Object.keys(currentValue)[0].split('-')[1];
+            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+              return {
+                ...day,
+                week
+              }
+            });
+            return [...accumulator, ...days];
+          }, []);   
+        } else {
+          predictionData = [];
+        }
+
         setPastData(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
@@ -286,11 +332,25 @@ const Dashboard = () => {
         pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
 
         let predictionData = Object.values((await api.getPredictionRegion(country, region)).data)[0];
-        predictionData = Array.isArray(predictionData) ? predictionData : [];
-        predictionData = predictionData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+        if(Array.isArray(predictionData) && predictionData.length > 0) {
+          predictionData = predictionData
+          .reduce((accumulator, currentValue) => {
+            const week = +Object.keys(currentValue)[0].split('-')[1];
+            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+              return {
+                ...day,
+                week
+              }
+            });
+            return [...accumulator, ...days];
+          }, []);   
+        } else {
+          predictionData = [];
+        }
 
         setDistricts((await api.getDistricts(country, region)).data);
         setPastData(pastData);
+        console.log(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
       } else if(regions.length > 0) {
@@ -371,7 +431,7 @@ const Dashboard = () => {
                   renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
                 />
               </Grid>
-              { districts.length > 0 && 
+              { country === 'India' && districts.length > 0 && 
               <Grid>
                 <Autocomplete
                       options={districts}
