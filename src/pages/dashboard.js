@@ -12,6 +12,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 
 import api from '../api';
@@ -25,9 +27,17 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  paper: {
+    position: 'absolute',
+    width: '80%',
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
-const activeChart = (place, realData, predictionData, property) => {
+const activeChart = (place, realData, predictionData, property, name, colorPast, colorForecast) => {
   function scaleYaxis(max_elem) {
     var dig = 0
     if (max_elem < 10)
@@ -77,14 +87,13 @@ const activeChart = (place, realData, predictionData, property) => {
 
   const yaxis_scale = scaleYaxis(max_act);
 
-  const typeCase = 'active' === property ? 'Active' : 'Deceased';
   const data = {
       labels: dates,
       datasets: [{
-          label: typeCase,
+          label: name,
           fill: false,
           lineTension: 0.2,
-          borderColor: 'active' === property ? "blue" : "red",
+          borderColor: colorPast,
           borderCapStyle: 'square',
           borderJoinStyle: 'miter',
           pointBackgroundColor: "black",
@@ -101,7 +110,7 @@ const activeChart = (place, realData, predictionData, property) => {
           label: "Forecast",
           fill: false,
           lineTension: 0.3,
-          borderColor: 'active' === property ? 'orange' : 'rgb(97, 27, 45)',
+          borderColor: colorForecast,
           borderCapStyle: 'square',
           borderJoinStyle: 'miter',
           pointBackgroundColor: "black",
@@ -119,7 +128,7 @@ const activeChart = (place, realData, predictionData, property) => {
   const options = {
       title: {
           display: true,
-          text: `${place} ${typeCase} cases Forecast(next 7 days)`
+          text: `${place} ${name} cases Forecast(next 21 days)`
       },
       maintainAspectRatio: false,
       responsive: true,
@@ -174,6 +183,9 @@ const Dashboard = () => {
   const [ , setSearchBarDistrict] = useState(null); 
   const [ heatFactorData, setHeatFactorData ] = useState({});
 
+  const [ plot, setPlot ] = useState('Active');
+  const [ open, setOpen ] = useState(false);
+
   const handleChange = (event) => {
     setDistrict();
     setRegion();
@@ -210,7 +222,7 @@ const Dashboard = () => {
           predictionData = [];
         }
 
-        setCountries(['Russia', 'India', 'US']);
+        setCountries(['India', 'US', 'Russia']);
         setRegions(regions);
         setPastData(pastData);
         setPredictionData(predictionData);
@@ -334,7 +346,6 @@ const Dashboard = () => {
         setDistricts([]);
         setRegions(regions);
         setLoaded(true);
-        //fetchCountry(country, regions);
       }
     }
 
@@ -346,10 +357,17 @@ const Dashboard = () => {
     setRegion(region);
   }
 
-
   const districtHandler = (district) => {
     setDistrict(district);
   }
+
+  const plotHandler = (plot) => {
+    setPlot(plot);
+  }
+
+  const handleOpen = (state) => {
+    setOpen(state);
+  };
 
   const title = () => {
     if(district) {
@@ -360,8 +378,9 @@ const Dashboard = () => {
     return country
   }
 
-  const lineInfected = activeChart(title(), pastData, predictionData, 'active');
-  const lineDeaths = activeChart(title(), pastData, predictionData, 'deaths');
+  const lineActive = activeChart(title(), pastData, predictionData, 'active', 'Active', 'blue', 'orange');
+  const lineConfirmed = activeChart(title(), pastData, predictionData, 'confirmed', 'Confirmed', 'red', 'darkgoldenrod');
+  const lineDeaths = activeChart(title(), pastData, predictionData, 'deaths', 'Deceased', 'gray', 'saddlebrown');
 
   return (
     <>
@@ -378,21 +397,7 @@ const Dashboard = () => {
       </Container>
       <Container maxWidth="xl" component="main">
         <Grid container>
-          <Grid item xs={12} md={3}>
-            <Grid xs={12} style={{padding: '5px'}}>
-              <Paper>
-                <Typography component="h1" variant="h5" align="center" color="textPrimary">
-                  The Last 7 Days 
-                </Typography>
-              </Paper>
-            </Grid>
-            <Loading loaded={loaded}>
-              <Grid xs={12} style={{padding: '5px'}}>
-                <TableDays showActive={country !== 'US'} data={pastData} />
-              </Grid>
-            </Loading>
-          </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={6}>
             <Grid xs={12} style={{padding: '5px'}}>
                 <Paper>
                   <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
@@ -469,43 +474,96 @@ const Dashboard = () => {
               </Paper>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <Grid xs={12} style={{padding: '5px'}}>
               <Paper>
-                <Typography component="h1" variant="h5" align="center" color="textPrimary">
-                  The Next 3 Weeks
+                <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
+                  { plot }
                 </Typography>
               </Paper>
             </Grid>
             <Loading loaded={loaded}>
-              <Grid xs={12} style={{padding: '5px'}}>
-                <TableWeeks showActive={country !== 'US'} data={predictionData} />
+              <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
+                <Paper >
+                  <Grid xs={12} style={{ height: '462px' }}>
+                    {
+                      plot === 'Active' &&
+                      <Line data={lineActive.data} options={lineActive.options} />
+                    }
+                    {
+                      plot === 'Confirmed' &&
+                      <Line data={lineConfirmed.data} options={lineConfirmed.options} />
+                    }
+                    {
+                      plot === 'Deceased' &&
+                      <Line data={lineDeaths.data} options={lineDeaths.options}/>
+                    }
+                  </Grid>
+                  <Grid xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                      <ButtonGroup size="large">
+                        <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                        <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
+                        <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
+                      </ButtonGroup>
+                  </Grid>
+                  <Grid xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpen.bind(this, true)}>
+                        See the Complete Forecast!
+                    </Button>
+                    <Modal
+                      open={open}
+                      onClose={handleOpen.bind(this, false)}
+                    >
+                      <Grid style={{top: `50%`, left: `50%`, transform: `translate(-50%, -50%)`}} className={classes.paper}>
+                        <Grid container>
+                          <Grid xs={4} md={4}>
+                            <Grid xs={12} style={{padding: '5px'}}>
+                              <Paper>
+                                <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                                  Week 1 
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                            <Grid xs={12} style={{padding: '5px'}}>
+                              <TableDays showActive={country !== 'US'} data={predictionData.filter(datum => datum.week === 1)} />
+                            </Grid>
+                          </Grid>
+                          <Grid xs={4} md={4}>
+                            <Grid xs={12} style={{padding: '5px'}}>
+                              <Paper>
+                                <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                                  Week 2
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                            <Grid xs={12} style={{padding: '5px'}}>
+                              <TableDays showActive={country !== 'US'} data={predictionData.filter(datum => datum.week === 2)} />
+                            </Grid>
+                          </Grid>
+                          <Grid xs={4} md={4}>
+                            <Grid xs={12} style={{padding: '5px'}}>
+                              <Paper>
+                                <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                                  Week 3 
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                            <Grid xs={12} style={{padding: '5px'}}>
+                              <TableDays showActive={country !== 'US'} data={predictionData.filter(datum => datum.week === 3)} />
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Modal>
+                  </Grid>
+                </Paper>
               </Grid>
             </Loading>
           </Grid>
         </Grid>
       </Container>
-      <Container maxWidth="xl" component="main">
-        <Grid container>
-            <Loading loaded={loaded}>
-              {
-                (country !== 'US') &&
-                <Grid item xs={12} md={6} style={{height: '450px', padding: '5px'}}>
-                  <Paper style={{ height: '100%' }}>
-                      <Line data={lineInfected.data} options={lineInfected.options} />
-                  </Paper>
-                </Grid>
-              }
-              <Grid item xs={12} md={country !== 'US' ? 6 : 12} style={{height: '450px', padding: '5px'}}>
-                <Paper style={{ height: '100%' }}>
-                  <Line data={lineDeaths.data} options={lineDeaths.options}/>
-                </Paper>
-              </Grid>
-            </Loading>
-          </Grid>
-      </Container>
     </>
   );
 }
-
+// Confirmed, Active, Deceased
 export default Dashboard;
