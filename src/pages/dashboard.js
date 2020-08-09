@@ -3,6 +3,7 @@ import { Line } from 'react-chartjs-2';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
+import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -15,7 +16,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import api from '../api';
 import Map from '../components/map';
-import CustomizedTables from '../components/table';
+import TableDays from '../components/table-days';
+import TableWeeks from '../components/table-weeks';
 import Loading from '../components/loading'
 
 const useStyles = makeStyles((theme) => ({
@@ -178,90 +180,41 @@ const Dashboard = () => {
     setCountry(event.target.value);
   };
 
-  const fetchCountry = async (country, regions) => {
-    const pastPromises = Promise.all(regions
-      .filter(region => region !== country)
-      .map(region => api.getPastRegion(country, region))
-    );
-
-    const predictionPromises = Promise.all(regions
-      .filter(region => region !== country)
-      .map(region => api.getPredictionRegion(country, region))
-    );
-
-    let  [pastData, predictionData] = await Promise.all([pastPromises, predictionPromises])
-
-  pastData = pastData.map(result => Array.isArray(result.data) ? result.data : Object.values(result.data)[0])
-    // Limpiando array
-    .filter(result => {
-      return Array.isArray(result) && result.length > 0;
-    })
-    // Remover repetidos
-    .map(day => {
-      return day.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
-    })
-    // Sumar todas las regiones de rusia
-    .reduce((accumulator, currentValue) => accumulator
-      .map((item, index) => {
-        return {
-          date: item.date,
-          active: item.active + currentValue[index].active,
-          confirmed: item.confirmed + currentValue[index].confirmed,
-          deaths: item.deaths + currentValue[index].deaths
-        }
-      })
-    );
-
-    predictionData = predictionData.map(result => Array.isArray(result.data) ? result.data : Object.values(result.data)[0])
-    // Limpiando array
-    .filter(item => {
-      return Array.isArray(item) && item.length > 0;
-    })
-    // Cambiando formato para que funcione con lo implementado anteriormente
-    .map(result => {
-      return result
-      .reduce((accumulator, currentValue) => {
-        const week = +Object.keys(currentValue)[0].split('-')[1];
-        const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
-          return {
-            ...day,
-            week
-          }
-        });
-        return [...accumulator, ...days];
-      }, []);
-    })
-    // Remover repetidos
-    .map(day => {
-      return day.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index)
-    })
-    // Sumar todas las regiones de rusia
-    .reduce((accumulator, currentValue) => accumulator
-      .map((item, index) => {
-        return {
-          date: item.date,
-          active: item.active + currentValue[index].active,
-          confirmed: item.confirmed + currentValue[index].confirmed,
-          deaths: item.deaths + currentValue[index].deaths
-        }
-      })
-    );
-
-    setLoaded(true);
-    setPastData(pastData);
-    setPredictionData(predictionData);
-  }
 
   useEffect(() => {
     const fetchGlobalData = async () => {
       try {
-        //const { data: { availableCountries: countries } } = await api.getCountries();
-        const regions = Object.values((await api.getRegions(country)).data)[0];
         // Por ahora solo son tres paises
+        //const { data: { availableCountries: countries } } = await api.getCountries();
         //setCountries(countries);
+        const regions = Object.values((await api.getRegions(country)).data)[0];
+
+        let pastData = (await api.getPastCountry(country)).data;
+        pastData = Array.isArray(pastData) ? pastData : [];
+        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+
+        let predictionData = Object.values((await api.getPredictionCountry(country)).data)[0];
+        if(Array.isArray(predictionData) && predictionData.length > 0) {
+          predictionData = predictionData
+          .reduce((accumulator, currentValue) => {
+            const week = +Object.keys(currentValue)[0].split('-')[1];
+            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+              return {
+                ...day,
+                week
+              }
+            });
+            return [...accumulator, ...days];
+          }, []);   
+        } else {
+          predictionData = [];
+        }
+
         setCountries(['Russia', 'India', 'US']);
         setRegions(regions);
-        await fetchCountry(country, regions);
+        setPastData(pastData);
+        setPredictionData(predictionData);
+        setLoaded(true);
       } catch (error) {
         console.log(error);
       }
@@ -302,11 +255,11 @@ const Dashboard = () => {
     setLoaded(false);
     const fetchData = async () => {
       if(district) {
-        let pastData = (await api.getPastDistrict(country, district)).data;
+        let pastData = (await api.getPastDistrict(country, region, district)).data;
         pastData = Array.isArray(pastData) ? pastData : [];
         pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
 
-        let predictionData = Object.values((await api.getPredictionDistrict(country, district)).data)[0];
+        let predictionData = Object.values((await api.getPredictionDistrict(country, region, district)).data)[0];
         if(Array.isArray(predictionData) && predictionData.length > 0) {
           predictionData = predictionData
           .reduce((accumulator, currentValue) => {
@@ -350,14 +303,38 @@ const Dashboard = () => {
 
         setDistricts((await api.getDistricts(country, region)).data);
         setPastData(pastData);
-        console.log(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
       } else if(regions.length > 0) {
         const regions = Object.values((await api.getRegions(country)).data)[0];
+
+        let pastData = (await api.getPastCountry(country)).data;
+        pastData = Array.isArray(pastData) ? pastData : [];
+        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+
+        let predictionData = Object.values((await api.getPredictionCountry(country)).data)[0];
+        if(Array.isArray(predictionData) && predictionData.length > 0) {
+          predictionData = predictionData
+          .reduce((accumulator, currentValue) => {
+            const week = +Object.keys(currentValue)[0].split('-')[1];
+            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+              return {
+                ...day,
+                week
+              }
+            });
+            return [...accumulator, ...days];
+          }, []);   
+        } else {
+          predictionData = [];
+        }
+
+        setPastData(pastData);
+        setPredictionData(predictionData);
         setDistricts([]);
         setRegions(regions);
-        fetchCountry(country, regions);
+        setLoaded(true);
+        //fetchCountry(country, regions);
       }
     }
 
@@ -387,102 +364,147 @@ const Dashboard = () => {
   const lineDeaths = activeChart(title(), pastData, predictionData, 'deaths');
 
   return (
-    <Grid container>
-      <Grid item xs={12} md={3} style={{padding: '5px'}}>
-        <Paper style={{ height: '100%' }}>
-          <Loading loaded={loaded}>
-            <CustomizedTables showActive={country !== 'US'} title={title()} data={pastData} />
-            <CustomizedTables showActive={country !== 'US'} title={`Forecasted ${title()}`} data={predictionData} />
-          </Loading>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={5} style={{padding: '5px'}}>
-        <Paper style={{ height: '100%' }}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel id="country-label">Country</InputLabel>
-            <Grid container>
-              <Grid >
-                <Select
-                  id="country"
-                  labelId="country-label"
-                  value={country}
-                  onChange={handleChange}
-                  label="Country"
-                >
-                  {
-                    countries.map((item => {
-                      return <MenuItem key={item} value={item}>{item}</MenuItem>
-                    }))
-                  }
-                </Select>
+    <>
+      <Container maxWidth="xl" component="main">
+        <Grid container>
+          <Grid xs={12} style={{padding: '5px'}}>
+            <Paper>
+              <Typography component="h1" variant="h4" align="center" color="textPrimary">
+                Forecasting the COVID-19 Transmission Dynamics 
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+      <Container maxWidth="xl" component="main">
+        <Grid container>
+          <Grid item xs={12} md={3}>
+            <Grid xs={12} style={{padding: '5px'}}>
+              <Paper>
+                <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                  The Last 7 Days 
+                </Typography>
+              </Paper>
+            </Grid>
+            <Loading loaded={loaded}>
+              <Grid xs={12} style={{padding: '5px'}}>
+                <TableDays showActive={country !== 'US'} data={pastData} />
               </Grid>
-              <Grid>
-                <Autocomplete
-                  options={regions}
-                  getOptionLabel={(option) => option}
-                  onInputChange={(event, newInputValue) => {
-                    setSearchBarRegion(newInputValue);
-                    if(regions.includes(newInputValue)) {
-                      setDistrict();
-                      setRegion(newInputValue);
-                    }
-                  }}
-                  style={{ width: 200 }}
-                  renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
-                />
-              </Grid>
-              { country === 'India' && districts.length > 0 && 
-              <Grid>
-                <Autocomplete
-                      options={districts}
-                      getOptionLabel={(option) => option}
-                      onInputChange={(event, newInputValue) => {
-                        setSearchBarDistrict(newInputValue);
-                        if(districts.includes(newInputValue)) {
-                          setDistrict(newInputValue);
+            </Loading>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <Grid xs={12} style={{padding: '5px'}}>
+                <Paper>
+                  <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
+                      {title()}
+                  </Typography>
+                </Paper>
+            </Grid>
+            <Grid xs={12} style={{padding: '5px'}}>
+              <Paper style={{ height: '100%' }}>
+                <FormControl variant="outlined" className={classes.formControl}>
+                  <Grid container>
+                    <Grid>
+                      <InputLabel id="country-label">Country</InputLabel>
+                      <Select
+                        id="country"
+                        labelId="country-label"
+                        value={country}
+                        onChange={handleChange}
+                        label="Country"
+                      >
+                        {
+                          countries.map((item => {
+                            return <MenuItem key={item} value={item}>{item}</MenuItem>
+                          }))
                         }
-                      }}
-                      style={{ width: 200 }}
-                      renderInput={(params) => <TextField {...params} label={'District'} variant="outlined" />}
-                  />
+                      </Select>
+                    </Grid>
+                    <Grid>
+                      <Autocomplete
+                        options={regions}
+                        getOptionLabel={(option) => option}
+                        onInputChange={(event, newInputValue) => {
+                          setSearchBarRegion(newInputValue);
+                          if(regions.includes(newInputValue)) {
+                            setDistrict();
+                            setRegion(newInputValue);
+                          }
+                        }}
+                        style={{ width: 200 }}
+                        renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
+                      />
+                    </Grid>
+                    { country === 'India' && districts.length > 0 && 
+                    <Grid>
+                      <Autocomplete
+                            options={districts}
+                            getOptionLabel={(option) => option}
+                            onInputChange={(event, newInputValue) => {
+                              setSearchBarDistrict(newInputValue);
+                              if(districts.includes(newInputValue)) {
+                                setDistrict(newInputValue);
+                              }
+                            }}
+                            style={{ width: 200 }}
+                            renderInput={(params) => <TextField {...params} label={'District'} variant="outlined" />}
+                        />
+                    </Grid>
+                    }
+                    { (country === 'India' && region) &&
+                      <Grid>
+                        <Button onClick={regionHandler.bind(this, undefined)} style={{ height: 56 }} variant="outlined">Back</Button>
+                      </Grid>
+                    }
+                  </Grid>
+                </FormControl>
+                <Map 
+                  heatFactors={heatFactorData}
+                  country={country}
+                  region={region}
+                  regionHandler={regionHandler} 
+                  district={district}
+                  districtHandler={districtHandler}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Grid xs={12} style={{padding: '5px'}}>
+              <Paper>
+                <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                  The Next 3 Weeks
+                </Typography>
+              </Paper>
+            </Grid>
+            <Loading loaded={loaded}>
+              <Grid xs={12} style={{padding: '5px'}}>
+                <TableWeeks showActive={country !== 'US'} data={predictionData} />
               </Grid>
-              }
-              { (country === 'India' && region) &&
-                <Grid>
-                  <Button onClick={regionHandler.bind(this, undefined)} style={{ height: 56 }} variant="outlined">Back</Button>
+            </Loading>
+          </Grid>
+        </Grid>
+      </Container>
+      <Container maxWidth="xl" component="main">
+        <Grid container>
+            <Loading loaded={loaded}>
+              {
+                (country !== 'US') &&
+                <Grid item xs={12} md={6} style={{height: '450px', padding: '5px'}}>
+                  <Paper style={{ height: '100%' }}>
+                      <Line data={lineInfected.data} options={lineInfected.options} />
+                  </Paper>
                 </Grid>
               }
-            </Grid>
-          </FormControl>
-          <Typography variant="h3" align="center" style={{paddingTop: '25px', paddingBottom: '25px'}}>
-            {title()}
-          </Typography>
-          <Map 
-            heatFactors={heatFactorData}
-            country={country}
-            region={region}
-            regionHandler={regionHandler} 
-            district={district}
-            districtHandler={districtHandler}
-          />
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={4} style={{padding: '5px'}}>
-        <Paper style={{ height: '100%' }}>
-          <Loading loaded={loaded}>
-            {
-              (country !== 'US') &&
-              <Grid item xs={12} style={{height: '450px'}}>
-                <Line data={lineInfected.data} options={lineInfected.options} />
+              <Grid item xs={12} md={country !== 'US' ? 6 : 12} style={{height: '450px', padding: '5px'}}>
+                <Paper style={{ height: '100%' }}>
+                  <Line data={lineDeaths.data} options={lineDeaths.options}/>
+                </Paper>
               </Grid>
-            }
-            <Grid item xs={12} style={{height: '450px'}}>
-              <Line data={lineDeaths.data} options={lineDeaths.options}/>
-            </Grid>
-          </Loading>
-        </Paper>
-      </Grid>
-    </Grid>
+            </Loading>
+          </Grid>
+      </Container>
+    </>
   );
 }
 

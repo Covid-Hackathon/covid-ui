@@ -10,11 +10,9 @@ import Paper from '@material-ui/core/Paper';
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: theme.palette.primary.dark,
       color: theme.palette.common.white,
-    },
-    body: {
-      fontSize: 14,
+      fontWeight: 'bold'
     },
   }))(TableCell);
   
@@ -62,11 +60,6 @@ const CustomizedTables = (props) => {
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
-            {props.title && 
-                <TableRow> 
-                    <StyledTableCell colSpan={4} align="center">{props.title}</StyledTableCell>
-                </TableRow>
-            }
             <TableRow>
               <StyledTableCell align="center">Date</StyledTableCell>
               { showConfirmed && confirmedOn && <StyledTableCell align="center">Confirmed</StyledTableCell> }

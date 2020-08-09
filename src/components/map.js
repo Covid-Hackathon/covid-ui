@@ -6,21 +6,21 @@ const countries = {
     Russia: {
         map: 'russia/russia-region.json',
         width: 975,
-        height: 610,
+        height: 600,
         objectName: 'collection',
         propertyName: 'en_native_nam'
     },
     India: {
         map: 'india/india.json',
         width: 1000,
-        height: 1000,
+        height: 600,
         objectName: 'india',
         propertyName: 'st_nm'
     },
     US: {
         map: 'united-states/us-albers.json',
         width: 960,
-        height: 500,
+        height: 600,
         objectName: 'us',
         propertyName: 'name'
     },
@@ -85,7 +85,7 @@ const Map = (props) => {
                         const chosenArea = (country === 'India' && region) ? district: region;
 
                         if(currentArea === chosenArea) {
-                            return "darkslategray";
+                            return "midnightblue";
                         } else if (heatFactors.hasOwnProperty(currentArea)) {
                             const percentage = heatFactors[currentArea];
                             return color(percentage);
@@ -98,7 +98,7 @@ const Map = (props) => {
                     .attr("cursor", "pointer")
                     .on("click", function (item) {
                         const currentArea = item.properties[propertyName];
-                        if(d3.select(this).style("fill") === 'darkslategray') {
+                        if(d3.select(this).style("fill") === 'midnightblue') {
                             if(country === 'India' && region) {
                                 console.log('District');
                                 districtHandler(undefined);
@@ -106,7 +106,7 @@ const Map = (props) => {
                                 regionHandler(undefined);
                             }
                         } else {
-                            d3.select(this).attr("r", 10).style("fill", "darkslategray");
+                            d3.select(this).attr("r", 10).style("fill", "midnightblue");
                             if(country === 'India' && region) {
                                 districtHandler(currentArea);
                             } else {
@@ -115,12 +115,12 @@ const Map = (props) => {
                         }
                     })
                     .on("mouseover", function (item) {
-                        if(d3.select(this).style("fill") !== 'darkslategray') {
-                            d3.select(this).attr("r", 10).style("fill", "gray");
+                        if(d3.select(this).style("fill") !== 'midnightblue') {
+                            d3.select(this).attr("r", 10).style("fill", "royalblue");
                         }
                     })
                     .on("mouseout", function (item) {
-                        if(d3.select(this).style("fill") !== 'darkslategray') {
+                        if(d3.select(this).style("fill") !== 'midnightblue') {
                             const currentArea = item.properties[propertyName];
                             let currentColor = color(0);
                             if(heatFactors.hasOwnProperty(currentArea)) {

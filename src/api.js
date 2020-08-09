@@ -20,6 +20,16 @@ const getDistricts = async (country, region) => {
     return await api.get(`/countries/${country}/districts/${region}`);
 }
 
+// Country 
+const getPredictionCountry = async (country) => {
+    return await api.get(`/countries/${country}/predict`);
+}
+
+const getPastCountry = async (country) => {
+    return await api.get(`/countries/${country}/past`);
+}
+
+// Regions
 const getPredictionRegion = async (country, region) => {
     return await api.get(`/countries/${country}/predict/${region}`);
 }
@@ -28,14 +38,16 @@ const getPastRegion = async (country, region) => {
     return await api.get(`/countries/${country}/past/${region}`);
 }
 
-const getPredictionDistrict = async (country, district) => {
-    return await api.get(`/countries/${country}/predict?district=${district}`);
+// District
+const getPredictionDistrict = async (country, region, district) => {
+    return await api.get(`/countries/${country}/predict/${region}/${district}`);
 }
 
-const getPastDistrict = async (country, district) => {
-    return await api.get(`/countries/${country}/past?district=${district}`);
+const getPastDistrict = async (country, region, district) => {
+    return await api.get(`/countries/${country}/past/${region}/${district}`);
 }
 
+// Factors
 const getHeatFactorsCountry = async (country) => {
     return await api.get(`/countries/${country}/heatfactors`);
 }
@@ -48,6 +60,8 @@ export default {
     getCountries,
     getRegions,
     getDistricts,
+    getPastCountry,
+    getPredictionCountry,
     getPastRegion,
     getPredictionRegion,
     getPastDistrict,
