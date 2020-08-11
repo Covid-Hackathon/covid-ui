@@ -242,6 +242,9 @@ const Dashboard = () => {
       setHeatFactorData(heatFactor);
     }
 
+    if(country === 'US' && plot === 'Active') {
+      setPlot('Confirmed');
+    }
     fetchData();
   }, [country]);
 
@@ -501,7 +504,9 @@ const Dashboard = () => {
                   </Grid>
                   <Grid xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                       <ButtonGroup size="large">
-                        <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                        {
+                          country !== 'US' && <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                        }
                         <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
                         <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
                       </ButtonGroup>
@@ -565,5 +570,5 @@ const Dashboard = () => {
     </>
   );
 }
-// Confirmed, Active, Deceased
+
 export default Dashboard;
