@@ -239,6 +239,8 @@ const Dashboard = () => {
     const fetchData = async () => {
       let result = await api.getHeatFactorsCountry(country);
       const heatFactor = result.data.hasOwnProperty('heatFactors') ? result.data.heatFactors : result.data;
+      const regions = Object.values((await api.getRegions(country)).data)[0];
+      setRegions(regions);
       setHeatFactorData(heatFactor);
     }
 
@@ -320,9 +322,7 @@ const Dashboard = () => {
         setPastData(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
-      } else if(regions.length > 0) {
-        const regions = Object.values((await api.getRegions(country)).data)[0];
-
+      } else {
         let pastData = (await api.getPastCountry(country)).data;
         pastData = Array.isArray(pastData) ? pastData : [];
         pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
@@ -347,7 +347,7 @@ const Dashboard = () => {
         setPastData(pastData);
         setPredictionData(predictionData);
         setDistricts([]);
-        setRegions(regions);
+        
         setLoaded(true);
       }
     }
