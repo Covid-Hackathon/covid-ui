@@ -399,17 +399,17 @@ const Dashboard = () => {
         </Grid>
       </Container>
       <Container maxWidth="xl" component="main">
-        <Grid container>
+        <Grid container style={{ height: '100%' }}>
           <Grid item xs={12} md={6}>
-            <Grid xs={12} style={{padding: '5px'}}>
+            <Grid item xs={12} style={{padding: '5px'}}>
                 <Paper>
                   <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
                       {title()}
                   </Typography>
                 </Paper>
             </Grid>
-            <Grid xs={12} style={{padding: '5px'}}>
-              <Paper style={{ height: '100%' }}>
+            <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
+              <Paper style={{height: '100%'}}>
                 <FormControl variant="outlined" className={classes.formControl}>
                   <Grid container>
                     <Grid>
@@ -478,7 +478,7 @@ const Dashboard = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Grid xs={12} style={{padding: '5px'}}>
+            <Grid item xs={12} style={{padding: '5px'}}>
               <Paper>
                 <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
                   { plot }
@@ -487,8 +487,8 @@ const Dashboard = () => {
             </Grid>
             <Loading loaded={loaded}>
               <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
-                <Paper >
-                  <Grid xs={12} style={{ height: '462px' }}>
+                <Paper style={{height: '100%'}}>
+                  <Grid style={{height: '400px', padding: '5px'}} xs={12}>
                     {
                       plot === 'Active' &&
                       <Line data={lineActive.data} options={lineActive.options} />
