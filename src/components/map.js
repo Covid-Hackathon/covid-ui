@@ -47,7 +47,7 @@ const Map = (props) => {
             let propertyName = countries[country].propertyName;
 
             if(country === 'India' && region) {
-                const fileRegion = region.toLowerCase().replaceAll(' ', '')
+                const fileRegion = region.toLowerCase().replace(/ /g, '');
                 pathFile = `india/states/${fileRegion}.json`;
                 objectName = fileRegion;
                 propertyName = 'district';

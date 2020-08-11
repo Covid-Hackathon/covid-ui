@@ -246,6 +246,8 @@ const Dashboard = () => {
 
     if(country === 'US' && plot === 'Active') {
       setPlot('Confirmed');
+    } else {
+      setPlot('Active');
     }
     fetchData();
   }, [country]);
@@ -389,7 +391,7 @@ const Dashboard = () => {
     <>
       <Container maxWidth="xl" component="main">
         <Grid container>
-          <Grid xs={12} style={{padding: '5px'}}>
+          <Grid item xs={12} style={{padding: '5px'}}>
             <Paper>
               <Typography component="h1" variant="h4" align="center" color="textPrimary">
                 Forecasting the COVID-19 Transmission Dynamics 
@@ -488,7 +490,7 @@ const Dashboard = () => {
             <Loading loaded={loaded}>
               <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
                 <Paper style={{height: '100%'}}>
-                  <Grid style={{height: '400px', padding: '5px'}} xs={12}>
+                  <Grid item style={{height: '400px', padding: '5px'}} xs={12}>
                     {
                       plot === 'Active' &&
                       <Line data={lineActive.data} options={lineActive.options} />
@@ -502,7 +504,7 @@ const Dashboard = () => {
                       <Line data={lineDeaths.data} options={lineDeaths.options}/>
                     }
                   </Grid>
-                  <Grid xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <Grid item xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                       <ButtonGroup size="large">
                         {
                           country !== 'US' && <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
@@ -511,7 +513,7 @@ const Dashboard = () => {
                         <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
                       </ButtonGroup>
                   </Grid>
-                  <Grid xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <Grid item xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpen.bind(this, true)}>
                         See the Complete Forecast!
                     </Button>
@@ -521,39 +523,39 @@ const Dashboard = () => {
                     >
                       <Grid style={{top: `50%`, left: `50%`, transform: `translate(-50%, -50%)`}} className={classes.paper}>
                         <Grid container>
-                          <Grid xs={4} md={4}>
-                            <Grid xs={12} style={{padding: '5px'}}>
+                          <Grid item xs={4} md={4}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
                               <Paper>
                                 <Typography component="h1" variant="h5" align="center" color="textPrimary">
                                   Week 1 
                                 </Typography>
                               </Paper>
                             </Grid>
-                            <Grid xs={12} style={{padding: '5px'}}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
                               <TableDays showActive={country !== 'US'} data={predictionData.filter(datum => datum.week === 1)} />
                             </Grid>
                           </Grid>
-                          <Grid xs={4} md={4}>
-                            <Grid xs={12} style={{padding: '5px'}}>
+                          <Grid item xs={4} md={4}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
                               <Paper>
                                 <Typography component="h1" variant="h5" align="center" color="textPrimary">
                                   Week 2
                                 </Typography>
                               </Paper>
                             </Grid>
-                            <Grid xs={12} style={{padding: '5px'}}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
                               <TableDays showActive={country !== 'US'} data={predictionData.filter(datum => datum.week === 2)} />
                             </Grid>
                           </Grid>
-                          <Grid xs={4} md={4}>
-                            <Grid xs={12} style={{padding: '5px'}}>
+                          <Grid item xs={4} md={4}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
                               <Paper>
                                 <Typography component="h1" variant="h5" align="center" color="textPrimary">
                                   Week 3 
                                 </Typography>
                               </Paper>
                             </Grid>
-                            <Grid xs={12} style={{padding: '5px'}}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
                               <TableDays showActive={country !== 'US'} data={predictionData.filter(datum => datum.week === 3)} />
                             </Grid>
                           </Grid>
