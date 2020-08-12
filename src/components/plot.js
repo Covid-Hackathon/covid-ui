@@ -47,7 +47,7 @@ const CustomizedPlot = (props) => {
         ]}
         layout={{
             title: title,
-            autosize: true
+            autosize: true,
         }}
         useResizeHandler={true}
         style={{width: "100%", height: "100%"}}

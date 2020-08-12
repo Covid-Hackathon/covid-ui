@@ -100,7 +100,6 @@ const Map = (props) => {
                         const currentArea = item.properties[propertyName];
                         if(d3.select(this).style("fill") === 'gold') {
                             if(country === 'India' && region) {
-                                console.log('District');
                                 districtHandler(undefined);
                             } else {
                                 regionHandler(undefined);

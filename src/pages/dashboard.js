@@ -268,18 +268,18 @@ const Dashboard = () => {
               </Typography>
             </Paper>
           </Grid>
+          <Grid item xs={12} style={{padding: '5px'}}>
+            <Paper>
+              <Typography component="h1" variant="h4" align="center" color="textPrimary">
+                {title()}
+              </Typography>
+            </Paper>
+          </Grid>
         </Grid>
       </Container>
       <Container maxWidth="xl" component="main">
         <Grid container style={{ height: '100%' }}>
           <Grid item xs={12} md={6}>
-            <Grid item xs={12} style={{padding: '5px'}}>
-                <Paper>
-                  <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
-                      {title()}
-                  </Typography>
-                </Paper>
-            </Grid>
             <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
               <Paper style={{height: '100%'}}>
                 <FormControl variant="outlined" className={classes.formControl}>
@@ -338,6 +338,16 @@ const Dashboard = () => {
                     }
                   </Grid>
                 </FormControl>
+                <Grid container alignItems="flex-start" justify="flex-end" direction="row" style={{padding: '40px'}}>
+                  <div>
+                    0%
+                  </div>
+                  <div class="heatscale">
+                  </div>
+                  <div>
+                    100%
+                  </div>
+                </Grid>
                 <Map 
                   heatFactors={heatFactorData}
                   country={country}
@@ -350,17 +360,10 @@ const Dashboard = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Grid item xs={12} style={{padding: '5px'}}>
-              <Paper>
-                <Typography variant="h4" align="center" style={{paddingTop: '10px', paddingBottom: '5px'}}>
-                  { plot }
-                </Typography>
-              </Paper>
-            </Grid>
-            <Loading loaded={loaded}>
-              <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
+            <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
+              <Loading loaded={true}>
                 <Paper style={{height: '100%'}}>
-                  <Grid item style={{height: '400px', padding: '5px'}} xs={12}>
+                  <Grid item style={{height: '550px', padding: '5px'}} xs={12}>
                     {
                       plot === 'Active' &&
                       <Plot 
@@ -396,7 +399,7 @@ const Dashboard = () => {
                     }
 
                   </Grid>
-                  <Grid item xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                       <ButtonGroup size="large">
                         {
                           country !== 'US' && <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
@@ -452,12 +455,24 @@ const Dashboard = () => {
                             </Grid>
                           </Grid>
                         </Grid>
+                        <Grid>
+                          <Grid item xs={6} style={{padding: '5px'}}>
+                            <Typography component="p" variant="p" align="left" color="textPrimary">
+                              Note: These values are cumulative
+                            </Typography>
+                          </Grid>
+                          <Grid container alignItems="flex-start" justify="flex-end" direction="row">
+                            <Button size="large" variant={"contained"} color={"primary"} onClick={handleOpen.bind(this, false)}>
+                              Close
+                            </Button>
+                          </Grid>
+                        </Grid>
                       </Grid>
                     </Modal>
                   </Grid>
                 </Paper>
-              </Grid>
-            </Loading>
+              </Loading>
+            </Grid>
           </Grid>
         </Grid>
       </Container>
