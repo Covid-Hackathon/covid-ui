@@ -53,7 +53,7 @@ const MeetTheTeam = () => {
                     <Person 
                         name='Alfonso Prado'
                         country='Chile'
-                        specialty='Front-End Developer and Back-End Developer'
+                        specialty='Front-End Developer'
                         photoUrl='/team/Alfonso-Prado.jpg'
                         linkedinUrl='https://www.linkedin.com/in/alfonsoprado/'
                         />
