@@ -8,8 +8,17 @@ import Link from '@material-ui/core/Link';
 const AboutTheModel = () => {
     return <>
     <Container maxWidth="xl" component="main">
-        <Grid container justify='center' style={{padding: '30px'}}>
-          <Grid item xs={12} md={5} style={{padding: '30px'}}>
+        <Grid container justify='center' style={{padding: '10px', paddingTop: '30px'}}>
+          <Grid item xs={12} md={10}>
+            <Paper>
+              <Typography component="h4" variant="h4" align="center" color="textPrimary">
+                About the model
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid container justify='center'>
+          <Grid item xs={12} md={5} style={{padding: '5px'}}>
             <Paper style={{padding: '50px'}}>
                 <Typography component="h4" variant="h4" align="center" color="textPrimary">
                     Abstract
@@ -23,7 +32,7 @@ const AboutTheModel = () => {
                 </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={5} style={{padding: '30px'}}>
+          <Grid item xs={12} md={5} style={{padding: '5px'}}>
             <Paper style={{padding: '50px'}}>
                 <Typography component="h4" variant="h4" align="center" color="textPrimary">
                     Assumptions

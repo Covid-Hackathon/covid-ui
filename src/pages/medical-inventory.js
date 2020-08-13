@@ -38,6 +38,15 @@ const MedicalInventory = () => {
     
     return <>
         <Container maxWidth="xl" component="main">
+            <Grid container justify='center' style={{padding: '10px', paddingTop: '30px'}}>
+            <Grid item xs={12} md={10}>
+                <Paper>
+                <Typography component="h4" variant="h4" align="center" color="textPrimary">
+                    Medical Inventory
+                </Typography>
+                </Paper>
+            </Grid>
+            </Grid>
             <Grid container style={{padding: '10px', paddingTop: '40px'}} justify='center'>
                 <Grid item xs={12} md={6}>
                     <TableContainer component={Paper}>
