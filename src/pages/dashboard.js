@@ -340,12 +340,12 @@ const Dashboard = () => {
                 </FormControl>
                 <Grid container alignItems="flex-start" justify="flex-end" direction="row" style={{padding: '40px'}}>
                   <div>
-                    0%
+                    0
                   </div>
                   <div class="heatscale">
                   </div>
                   <div>
-                    100%
+                    100
                   </div>
                 </Grid>
                 <Map 

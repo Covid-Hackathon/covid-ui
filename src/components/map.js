@@ -55,8 +55,8 @@ const Map = (props) => {
             const mapJson = await d3.json(`/topojson/countries/${pathFile}`);
             const color = d3
             .scaleThreshold()
-            .domain([0, 1, 5, 10, 15, 30, 50, 100])
-            .range(d3.schemeOrRd[8]);
+            .domain([0, 10, 20, 40, 60, 70, 80, 90, 100])
+            .range(d3.schemePuBu[9]);
 
             function centerZoom(data, objectName, projection, path, width, height) {
                 const o = topojson.mesh(data, data.objects[objectName], function(a, b) { return a === b; });
@@ -85,7 +85,7 @@ const Map = (props) => {
                         const chosenArea = (country === 'India' && region) ? district: region;
 
                         if(currentArea === chosenArea) {
-                            return "gold";
+                            return "red";
                         } else if (heatFactors.hasOwnProperty(currentArea)) {
                             const percentage = heatFactors[currentArea];
                             return color(percentage);
@@ -98,14 +98,14 @@ const Map = (props) => {
                     .attr("cursor", "pointer")
                     .on("click", function (item) {
                         const currentArea = item.properties[propertyName];
-                        if(d3.select(this).style("fill") === 'gold') {
+                        if(d3.select(this).style("fill") === 'red') {
                             if(country === 'India' && region) {
                                 districtHandler(undefined);
                             } else {
                                 regionHandler(undefined);
                             }
                         } else {
-                            d3.select(this).attr("r", 10).style("fill", "gold");
+                            d3.select(this).attr("r", 10).style("fill", "red");
                             if(country === 'India' && region) {
                                 districtHandler(currentArea);
                             } else {
@@ -114,12 +114,12 @@ const Map = (props) => {
                         }
                     })
                     .on("mouseover", function (item) {
-                        if(d3.select(this).style("fill") !== 'gold') {
+                        if(d3.select(this).style("fill") !== 'red') {
                             d3.select(this).attr("r", 10).style("fill", "grey");
                         }
                     })
                     .on("mouseout", function (item) {
-                        if(d3.select(this).style("fill") !== 'gold') {
+                        if(d3.select(this).style("fill") !== 'red') {
                             const currentArea = item.properties[propertyName];
                             let currentColor = color(0);
                             if(heatFactors.hasOwnProperty(currentArea)) {

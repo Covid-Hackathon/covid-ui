@@ -1,7 +1,7 @@
 .heatscale {
     width: 20%;
     height: 14px;
-    background-image: url('https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/YlOrRd.png');
+    background-image: url('https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/PuBu.png');
     background-size: 100% 100%;
     border: 1px solid rgb(0, 0, 0);
 }
