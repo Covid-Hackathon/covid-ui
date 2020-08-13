@@ -12,11 +12,12 @@ const Loading = (props) => {
     }
     
     return <Grid
-                container
-                spacing={0}
-                direction="column"
-                alignItems="center"
-                style={{ padding: '50px' }} >
+            container
+            style={{minHeight: '200px', height: '100%'}}
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center">
             <CircularProgress />
     </Grid>;
 }

@@ -85,7 +85,7 @@ const Map = (props) => {
                         const chosenArea = (country === 'India' && region) ? district: region;
 
                         if(currentArea === chosenArea) {
-                            return "darkcyan";
+                            return "darkorange";
                         } else if (heatFactors.hasOwnProperty(currentArea)) {
                             const percentage = heatFactors[currentArea];
                             return color(percentage);
@@ -98,14 +98,14 @@ const Map = (props) => {
                     .attr("cursor", "pointer")
                     .on("click", function (item) {
                         const currentArea = item.properties[propertyName];
-                        if(d3.select(this).style("fill") === 'darkcyan') {
+                        if(d3.select(this).style("fill") === 'darkorange') {
                             if(country === 'India' && region) {
                                 districtHandler(undefined);
                             } else {
                                 regionHandler(undefined);
                             }
                         } else {
-                            d3.select(this).attr("r", 10).style("fill", "darkcyan");
+                            d3.select(this).attr("r", 10).style("fill", "darkorange");
                             if(country === 'India' && region) {
                                 districtHandler(currentArea);
                             } else {
@@ -114,12 +114,12 @@ const Map = (props) => {
                         }
                     })
                     .on("mouseover", function (item) {
-                        if(d3.select(this).style("fill") !== 'darkcyan') {
+                        if(d3.select(this).style("fill") !== 'darkorange') {
                             d3.select(this).attr("r", 10).style("fill", "grey");
                         }
                     })
                     .on("mouseout", function (item) {
-                        if(d3.select(this).style("fill") !== 'darkcyan') {
+                        if(d3.select(this).style("fill") !== 'darkorange') {
                             const currentArea = item.properties[propertyName];
                             let currentColor = color(0);
                             if(heatFactors.hasOwnProperty(currentArea)) {

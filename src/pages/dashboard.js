@@ -119,7 +119,7 @@ const Dashboard = () => {
       setHeatFactorData(heatFactor);
     }
 
-    if(country === 'US' && plot === 'Active') {
+    if(country === 'US') {
       setPlot('Confirmed');
     } else {
       setPlot('Active');
@@ -259,18 +259,19 @@ const Dashboard = () => {
   }
   return (
     <>
+    <Grid item xs={12} style={{padding: '5px', backgroundImage: 'linear-gradient(to right, #00c6ff , #0072ff)', color:'white'}}>
+        <Typography component="h5" variant="h5" align="center" color="inherit'">
+          RECOVER
+        </Typography>
+        <Typography component="h6" variant="h6" align="center" color="inherit'">
+          Response to COVID-19 by Estimating essential Resources
+        </Typography>
+      </Grid>
       <Container maxWidth="xl" component="main">
-        <Grid container>
-          <Grid item xs={12} style={{padding: '5px'}}>
+        <Grid container style={{padding: '10px'}}>
+          <Grid item xs={12}>
             <Paper>
-              <Typography component="h1" variant="h4" align="center" color="textPrimary">
-                Forecasting the COVID-19 Transmission Dynamics 
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} style={{padding: '5px'}}>
-            <Paper>
-              <Typography component="h1" variant="h4" align="center" color="textPrimary">
+              <Typography component="h4" variant="h4" align="center" color="textPrimary">
                 {title()}
               </Typography>
             </Paper>
@@ -361,8 +362,8 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
-              <Loading loaded={true}>
-                <Paper style={{height: '100%'}}>
+              <Paper style={{height: '100%'}}>
+                <Loading loaded={loaded}>
                   <Grid item style={{height: '550px', padding: '5px'}} xs={12}>
                     {
                       plot === 'Active' &&
@@ -470,8 +471,8 @@ const Dashboard = () => {
                       </Grid>
                     </Modal>
                   </Grid>
+                  </Loading>
                 </Paper>
-              </Loading>
             </Grid>
           </Grid>
         </Grid>
