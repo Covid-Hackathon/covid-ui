@@ -1,9 +1,12 @@
 import React from 'react';
 import Dashboard from './pages/dashboard';
+import AboutTheModel from './pages/about-the-model';
+import MedicalInventory from './pages/medical-inventory';
+import MeetTheTeam from './pages/meet-the-team';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Link from '@material-ui/core/Link';
+//import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,7 +14,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect,
+  Link
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     fontWeight: 'bold',
     margin: theme.spacing(1, 1.5),
+    textDecoration: 'none',
+    '&:hover': {
+      color: "goldenrod",
+    },
   },
 }));
 
@@ -46,6 +55,7 @@ const App = () => {
 
   return (
     <>
+          <Router>
       <CssBaseline />
       <AppBar position="static" elevation={0} className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
@@ -53,24 +63,37 @@ const App = () => {
             RECOVER
           </Typography>
           <nav>
-            <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+            <Link to="/dashboard" className={classes.link}>
               Dashboard
             </Link>
-            <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+            <Link to="/about-the-model" className={classes.link}>
               About the Model
             </Link>
-            <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+            <Link to="/medical-inventory" className={classes.link}>
               Medical Inventory
             </Link>
-            <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+            <Link to="/meet-the-team" className={classes.link}>
               Meet the team
             </Link>
+            
           </nav>
         </Toolbar>
       </AppBar>
-      <Router>
+
         <Switch>
-          <Dashboard />
+          <Route path='/dashboard' exact>
+            <Dashboard />
+          </Route>
+          <Route path='/about-the-model' exact>
+            <AboutTheModel />
+          </Route>
+          <Route path='/medical-inventory' exact>
+            <MedicalInventory />
+          </Route>
+          <Route path='/meet-the-team' exact>
+            <MeetTheTeam />
+          </Route>
+          <Redirect path='/' to='/dashboard' />
         </Switch>
       </Router>
     </>
