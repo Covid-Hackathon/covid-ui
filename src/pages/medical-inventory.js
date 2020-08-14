@@ -62,21 +62,21 @@ const MedicalInventory = () => {
                             <TableBody>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-14</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">1415</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">861</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">5426</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">127635</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">20175</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">7093</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-21</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">1404</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">854</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">5384</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">134470</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">20020</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">7475</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-28</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">1412</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">859</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">5414</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">141561</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">20131</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">7857</StyledTableCell>
                                 </StyledTableRow>
                             </TableBody>
                         </Table>
@@ -132,21 +132,21 @@ const MedicalInventory = () => {
                             <TableBody>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-14</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">1415</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">861</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">5426</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">61411</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">43179</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">21590</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-21</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">1404</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">854</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">5384</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">63376</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">42847</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">21424</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-28</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">1412</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">859</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">5414</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">65750</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">43085</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">21543</StyledTableCell>
                                 </StyledTableRow>
                             </TableBody>
                         </Table>

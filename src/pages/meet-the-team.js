@@ -9,15 +9,15 @@ import Person from '../components/person';
 
 const MeetTheTeam = () => {
     return <>
-            <Container maxWidth="xl" component="main">
+        <Container maxWidth="xl" component="main">
             <Grid container justify='center' style={{padding: '10px', paddingTop: '30px'}}>
-            <Grid item xs={12} md={10}>
-                <Paper>
-                <Typography component="h4" variant="h4" align="center" color="textPrimary">
-                    Our Team
-                </Typography>
-                </Paper>
-            </Grid>
+                <Grid item xs={12} md={10}>
+                    <Paper>
+                    <Typography component="h4" variant="h4" align="center" color="textPrimary">
+                        Our Team
+                    </Typography>
+                    </Paper>
+                </Grid>
             </Grid>
             <Grid container justify='center'>
                 <Grid item xs={12} md={5} style={{padding: '10px'}}>
