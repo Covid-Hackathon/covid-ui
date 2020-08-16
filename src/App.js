@@ -29,9 +29,11 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
+    backgroundColor: '#353839'
   },
   toolbar: {
     flexWrap: 'wrap',
+    color: 'goldenrod'
   },
   toolbarTitle: {
     flexGrow: 1,
@@ -40,12 +42,12 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
   link: {
-    color: 'white',
+    color: 'goldenrod',
     fontWeight: 'bold',
     margin: theme.spacing(1, 1.5),
     textDecoration: 'none',
     '&:hover': {
-      color: "goldenrod",
+      color: "white",
     },
   },
 }));
@@ -60,17 +62,17 @@ const App = () => {
       <AppBar position="static" elevation={0} className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
-            RECOVER
+	  #CodeforCovid19
           </Typography>
           <nav>
             <Link to="/dashboard" className={classes.link}>
               Dashboard
             </Link>
-            <Link to="/about-the-model" className={classes.link}>
-              About the Model
-            </Link>
             <Link to="/medical-inventory" className={classes.link}>
               Medical Inventory
+            </Link>
+            <Link to="/about-the-model" className={classes.link}>
+              About the Model
             </Link>
             <Link to="/meet-the-team" className={classes.link}>
               Meet the team
