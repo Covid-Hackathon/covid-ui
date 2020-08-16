@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  Typography: {
+	fontFamily: [
+		'Pacifico'
+	]
+  },
   paper: {
     position: 'absolute',
     width: '80%',
@@ -261,7 +266,7 @@ const Dashboard = () => {
     <>
     <Grid item xs={12} style={{padding: '5px', backgroundImage: 'linear-gradient(to right, #00c6ff , #0072ff)', color:'white'}}>
         <Typography component="h5" variant="h5" align="center" color="inherit'">
-          RECOVER
+	  R.E.C.O.V.E.R
         </Typography>
         <Typography component="h6" variant="h6" align="center" color="inherit'">
           Response to COVID-19 by Estimating essential Resources
