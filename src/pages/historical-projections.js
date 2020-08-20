@@ -217,6 +217,17 @@ const HistoricalProjections = () => {
                             />
                             }
                             {
+                            plot === 'Recovered' &&
+                            <Plot 
+                                title={`${title()} Recovered cases Forecast (next 21 days)`}
+                                type="recovered"
+                                pastColor="blue" 
+                                predictionColor="orange" 
+                                pastData={pastData} 
+                                predictionData={predictionData} 
+                            />
+                            }
+                            {
                             plot === 'Confirmed' &&
                             <Plot 
                                 title={`${title()} Confirmed cases Forecast (next 21 days)`}
@@ -242,6 +253,7 @@ const HistoricalProjections = () => {
                         <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                             <ButtonGroup size="large">
                                 <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                                <Button variant={plot === 'Recovered'  ? "recovered" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
                                 <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
                                 <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
                             </ButtonGroup>
