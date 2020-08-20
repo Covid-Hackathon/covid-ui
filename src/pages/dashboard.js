@@ -13,6 +13,7 @@ import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Modal from '@material-ui/core/Modal';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 
 import api from '../api';
@@ -20,6 +21,7 @@ import Map from '../components/map';
 import TableDays from '../components/table-days';
 import Loading from '../components/loading';
 import Plot from '../components/plot';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +62,7 @@ const Dashboard = () => {
 
   const [ plot, setPlot ] = useState('Active');
   const [ open, setOpen ] = useState(false);
+  const [ notContent, setNotContent ] = useState(false);
 
   const handleChange = (event) => {
     setDistrict();
@@ -95,6 +98,12 @@ const Dashboard = () => {
           }, []);   
         } else {
           predictionData = [];
+        }
+
+        if(pastData.length === 0 || predictionData.length === 0){
+          setNotContent(true);
+        } else {
+          setNotContent(false);
         }
 
         setCountries(['India', 'US', 'Russia']);
@@ -170,6 +179,12 @@ const Dashboard = () => {
           predictionData = [];
         }
 
+        if(pastData.length === 0 || predictionData.length === 0){
+          setNotContent(true);
+        } else {
+          setNotContent(false);
+        }
+
         setPastData(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
@@ -193,6 +208,12 @@ const Dashboard = () => {
           }, []);   
         } else {
           predictionData = [];
+        }
+
+        if(pastData.length === 0 || predictionData.length === 0){
+          setNotContent(true);
+        } else {
+          setNotContent(false);
         }
 
         setDistricts((await api.getDistricts(country, region)).data);
@@ -219,6 +240,12 @@ const Dashboard = () => {
           }, []);   
         } else {
           predictionData = [];
+        }
+
+        if(pastData.length === 0 || predictionData.length === 0){
+          setNotContent(true);
+        } else {
+          setNotContent(false);
         }
 
         setPastData(pastData);
@@ -257,6 +284,7 @@ const Dashboard = () => {
     }
     return country
   }
+
   return (
     <>
     <Grid item xs={12} style={{padding: '5px', backgroundImage: 'linear-gradient(to right, #00c6ff , #0072ff)', color:'white'}}>
@@ -343,7 +371,7 @@ const Dashboard = () => {
                   <div>
                     0
                   </div>
-                  <div class="heatscale">
+                  <div className="heatscale">
                   </div>
                   <div>
                     100
@@ -363,7 +391,15 @@ const Dashboard = () => {
           <Grid item xs={12} md={6}>
             <Grid item xs={12} style={{height: '100%', padding: '5px'}}>
               <Paper style={{height: '100%'}}>
-                <Loading loaded={loaded}>
+                { notContent ?
+                  <Grid item xs={12} style={{height: '100%', padding: '40px'}}>
+                    <Alert severity="warning" >
+                      <AlertTitle>We don't have enough data</AlertTitle>
+                      Note! We don't have enough data to make a prediction to {title()}. 
+                    </Alert>
+                  </Grid>
+                  :
+                  <Loading loaded={loaded}>
                   <Grid item style={{height: '550px', padding: '5px'}} xs={12}>
                     {
                       plot === 'Active' &&
@@ -398,7 +434,6 @@ const Dashboard = () => {
                         predictionData={predictionData} 
                       />
                     }
-
                   </Grid>
                   <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                       <ButtonGroup size="large">
@@ -472,6 +507,7 @@ const Dashboard = () => {
                     </Modal>
                   </Grid>
                   </Loading>
+                }
                 </Paper>
             </Grid>
           </Grid>
@@ -480,5 +516,5 @@ const Dashboard = () => {
     </>
   );
 }
-
+// Note! We don't have enough data for this region. 
 export default Dashboard;
