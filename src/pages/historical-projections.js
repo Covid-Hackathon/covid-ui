@@ -22,6 +22,7 @@ import {
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -61,6 +62,8 @@ const HistoricalProjections = () => {
 
     const [ plot, setPlot ] = useState('Active');
 
+    const [ notContent, setNotContent ] = useState(false);
+
     const [ loaded, setLoaded ] = useState(false);
 
     useEffect(() => {
@@ -94,11 +97,12 @@ const HistoricalProjections = () => {
     useEffect(() => {
         const fetchData = async () => {
             const data = (await api.getData(selectedDate, region, country)).data.data;
+            setNotContent(false);
             if(data) {
                 setPastData(data.actual_data);
                 setPredictionData(data.predictions);
             } else {
-                console.log('Sin datos');
+                setNotContent(true);
             }
         }
 
@@ -191,48 +195,59 @@ const HistoricalProjections = () => {
                             </Grid>
                         </FormControl>
                     </Grid>
-                    <Grid item style={{height: '550px', padding: '5px'}}>
-                        {
-                        plot === 'Active' &&
-                        <Plot 
-                            title={`${title()} Active cases Forecast (next 21 days)`}
-                            type="active"
-                            pastColor="blue" 
-                            predictionColor="orange" 
-                            pastData={pastData} 
-                            predictionData={predictionData} 
-                        />
-                        }
-                        {
-                        plot === 'Confirmed' &&
-                        <Plot 
-                            title={`${title()} Confirmed cases Forecast (next 21 days)`}
-                            type="confirmed"
-                            pastColor="blue" 
-                            predictionColor="orange" 
-                            pastData={pastData} 
-                            predictionData={predictionData} 
-                        />
-                        }
-                        {
-                        plot === 'Deceased' &&
-                        <Plot 
-                            title={`${title()} Deceased cases Forecast (next 21 days)`}
-                            type="deaths"
-                            pastColor="blue" 
-                            predictionColor="orange" 
-                            pastData={pastData} 
-                            predictionData={predictionData} 
-                        />
-                        }
+                    { notContent ?
+                    <Grid item xs={12} style={{height: '100%', padding: '40px'}}>
+                        <Alert severity="warning" >
+                        <AlertTitle>We don't have enough data</AlertTitle>
+                        Note! We don't have enough data to make a prediction to {title()}. 
+                        </Alert>
                     </Grid>
-                    <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <ButtonGroup size="large">
-                            <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
-                            <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
-                            <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
-                        </ButtonGroup>
-                    </Grid>
+                    :
+                        <>
+                        <Grid item style={{height: '550px', padding: '5px'}}>
+                            {
+                            plot === 'Active' &&
+                            <Plot 
+                                title={`${title()} Active cases Forecast (next 21 days)`}
+                                type="active"
+                                pastColor="blue" 
+                                predictionColor="orange" 
+                                pastData={pastData} 
+                                predictionData={predictionData} 
+                            />
+                            }
+                            {
+                            plot === 'Confirmed' &&
+                            <Plot 
+                                title={`${title()} Confirmed cases Forecast (next 21 days)`}
+                                type="confirmed"
+                                pastColor="blue" 
+                                predictionColor="orange" 
+                                pastData={pastData} 
+                                predictionData={predictionData} 
+                            />
+                            }
+                            {
+                            plot === 'Deceased' &&
+                            <Plot 
+                                title={`${title()} Deceased cases Forecast (next 21 days)`}
+                                type="deaths"
+                                pastColor="blue" 
+                                predictionColor="orange" 
+                                pastData={pastData} 
+                                predictionData={predictionData} 
+                            />
+                            }
+                        </Grid>
+                        <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <ButtonGroup size="large">
+                                <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                                <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
+                                <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
+                            </ButtonGroup>
+                        </Grid>
+                        </>
+                    }
                 </Paper>
             </Grid>
         </Grid>
