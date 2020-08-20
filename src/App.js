@@ -18,6 +18,7 @@ import {
   Redirect,
   Link
 } from "react-router-dom";
+import HistoricalProjections from './pages/historical-projections';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -69,6 +70,9 @@ const App = () => {
             <Link to="/about-the-model" className={classes.link}>
               About the Model
             </Link>
+            <Link to="/historical-projections" className={classes.link}>
+              Historical Projections
+            </Link> 
             <Link to="/medical-inventory" className={classes.link}>
               Medical Inventory
             </Link>
@@ -86,6 +90,9 @@ const App = () => {
           </Route>
           <Route path='/about-the-model' exact>
             <AboutTheModel />
+          </Route>
+          <Route path='/historical-projections' exact>
+            <HistoricalProjections />
           </Route>
           <Route path='/medical-inventory' exact>
             <MedicalInventory />
