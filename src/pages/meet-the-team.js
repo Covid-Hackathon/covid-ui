@@ -14,7 +14,7 @@ const MeetTheTeam = () => {
                 <Grid item xs={12} md={10}>
                     <Paper>
                     <Typography component="h4" variant="h4" align="center" color="textPrimary">
-                        Our Team
+                        Meet the Team
                     </Typography>
                     </Paper>
                 </Grid>

@@ -10,10 +10,12 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
-      backgroundColor: theme.palette.primary.dark,
+      //backgroundColor: theme.palette.primary.dark,
+      backgroundColor: '#353839',
       color: theme.palette.common.white,
       fontWeight: 'bold'
     },
@@ -38,15 +40,13 @@ const MedicalInventory = () => {
     
     return <>
         <Container maxWidth="xl" component="main">
-            <Grid container justify='center' style={{padding: '10px', paddingTop: '30px'}}>
-                <Grid item xs={12} md={10}>
-                    <Paper>
-                    <Typography component="h4" variant="h4" align="center" color="textPrimary">
-                        Medical Inventory
-                    </Typography>
-                    </Paper>
+            <Grid container style={{padding: '25px'}} justify='center'>
+                <Grid item xs={12} align="center">
+                    <Typography component="h5" variant="h5" align="center" color="textPrimary">
+                    	Estimation of Medical Resources for Mumbai for the next three weeks
+                    </Typography>    
                 </Grid>
-            </Grid>
+            </Grid>   
             <Grid container style={{padding: '10px', paddingTop: '40px'}} justify='center'>
                 <Grid item xs={12} md={6}>
                     <TableContainer component={Paper}>
@@ -54,8 +54,8 @@ const MedicalInventory = () => {
                             <TableHead>
                                 <TableRow>
                                     <StyledTableCell align="center">Date</StyledTableCell>
-                                    <StyledTableCell align="center">Active</StyledTableCell>
                                     <StyledTableCell align="center">Confirmed</StyledTableCell>
+                                    <StyledTableCell align="center">Active</StyledTableCell>
                                     <StyledTableCell align="center">Deceased</StyledTableCell>
                                 </TableRow>
                             </TableHead>
@@ -91,7 +91,7 @@ const MedicalInventory = () => {
                                 <TableRow>
                                     <StyledTableCell align="center">Date</StyledTableCell>
                                     <StyledTableCell align="center">ICU Beds</StyledTableCell>
-                                    <StyledTableCell align="center">Ventilator Beds</StyledTableCell>
+                                    <StyledTableCell align="center">Ventilators</StyledTableCell>
                                     <StyledTableCell align="center">Oxygen Beds</StyledTableCell>
                                 </TableRow>
                             </TableHead>
@@ -153,13 +153,11 @@ const MedicalInventory = () => {
                     </TableContainer>
                 </Grid>
             </Grid>  
-            <Grid container style={{padding: '10px'}} justify='center'>
-                <Grid item xs={12} align="center">
-                    <Typography component="h6" variant="h6" align="center" color="textPrimary">
-                        ADD Details points on how these values are derived and what are they representing
-                    </Typography>    
-                </Grid>
-            </Grid>   
+            <Grid item xs={12} align="center">
+                  <Typography component="p" variant="p" align="justify" color="textPrimary" style={{paddingTop: '15px',  fontSize: '14px'}}>
+                      <Link href="https://bit.ly/3kpz8rz">Click here to view the Calculations behind these Estimates</Link><br />
+                  </Typography>
+	    </Grid>
         </Container>
     </>;
 }
