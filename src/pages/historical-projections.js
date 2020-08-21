@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const HistoricalProjections = () => {
+    const initDate = new Date();
+    initDate.setDate(initDate.getDate()-1);
+
     const classes = useStyles();
 
     const [ country, setCountry ] = useState('India');
@@ -59,7 +62,7 @@ const HistoricalProjections = () => {
     const [ pastData, setPastData ] = useState([]);
     const [ predictionData, setPredictionData ] = useState([]);
   
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const [selectedDate, setSelectedDate] = React.useState(initDate);
 
     const [ searchBarRegion, setSearchBarRegion ] = useState(''); 
     const [ searchBarDistrict, setSearchBarDistrict] = useState(''); 
@@ -68,6 +71,8 @@ const HistoricalProjections = () => {
 
     const [ notContent, setNotContent ] = useState(false);
 
+    
+
     useEffect(() => {
         const fetchGlobalData = async () => {
           try {
@@ -75,7 +80,7 @@ const HistoricalProjections = () => {
             //const { data: { availableCountries: countries } } = await api.getCountries();
             //setCountries(countries);
             const regions = Object.values((await api.getRegions(country)).data)[0];
-    
+
             setCountries(['India', 'US', 'Russia']);
             setRegions(regions);
           } catch (error) {
@@ -110,7 +115,15 @@ const HistoricalProjections = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = (await api.getData(selectedDate, country, district ? district : region )).data.data;
+
+            let place = country;
+            if(district) {
+                place = district;
+            } else if(region) {
+                place = region;
+            }
+
+            const data = (await api.getData(selectedDate, country, place )).data.data;
             setNotContent(false);
             if(data && data.hasOwnProperty('actual_data') && data.hasOwnProperty('predictions')) {
                 setPastData(data.actual_data);
@@ -122,7 +135,7 @@ const HistoricalProjections = () => {
             }
         }
 
-        if(!!country && !!region && !!selectedDate) {
+        if(!!country && !!selectedDate) {
             fetchData();
         }
     }, [country, region, district, selectedDate]);
