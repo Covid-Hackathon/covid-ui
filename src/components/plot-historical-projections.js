@@ -32,7 +32,7 @@ const CustomizedPlot = (props) => {
                 type: 'scatter',
                 mode: 'lines+markers',
                 marker: {color: pastColor},
-                name: "Past to Actual",
+                name: "Actual",
                 showlegend: true
             },
             {
@@ -41,7 +41,7 @@ const CustomizedPlot = (props) => {
                 type: 'scatter',
                 mode: 'lines+markers',
                 marker: {color: predictionColor},
-                name: "Predicted to Forecasted",
+                name: "Forecasted",
                 showlegend: true
             },
         ]}
