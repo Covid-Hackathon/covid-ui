@@ -52,19 +52,21 @@ const HistoricalProjections = () => {
 
     const [ region, setRegion ] = useState();
     const [ regions, setRegions ] = useState([]);
+    
+    const [ districts, setDistricts ] = useState([]);
+    const [ district, setDistrict ] = useState();
 
     const [ pastData, setPastData ] = useState([]);
     const [ predictionData, setPredictionData ] = useState([]);
   
     const [selectedDate, setSelectedDate] = React.useState(new Date());
 
-    const [ , setSearchBarRegion ] = useState(null); 
+    const [ searchBarRegion, setSearchBarRegion ] = useState(''); 
+    const [ searchBarDistrict, setSearchBarDistrict] = useState(''); 
 
     const [ plot, setPlot ] = useState('Confirmed');
 
     const [ notContent, setNotContent ] = useState(false);
-
-    const [ loaded, setLoaded ] = useState(false);
 
     useEffect(() => {
         const fetchGlobalData = async () => {
@@ -76,7 +78,6 @@ const HistoricalProjections = () => {
     
             setCountries(['India', 'US', 'Russia']);
             setRegions(regions);
-            setLoaded(true);
           } catch (error) {
             console.log(error);
           }
@@ -88,6 +89,8 @@ const HistoricalProjections = () => {
     useEffect(() => {
         const fetchData = async () => {
             const regions = Object.values((await api.getRegions(country)).data)[0];
+            setDistrict();
+            setDistricts([]);
             setRegions(regions);
         }
 
@@ -96,12 +99,25 @@ const HistoricalProjections = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = (await api.getData(selectedDate, region, country)).data.data;
+            const district = (await api.getDistricts(country, region)).data;
+            setDistricts(district);
+        }
+
+        if(region) {
+            fetchData();
+        }
+    }, [region]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = (await api.getData(selectedDate, country, district ? district : region )).data.data;
             setNotContent(false);
-            if(data) {
+            if(data && data.hasOwnProperty('actual_data') && data.hasOwnProperty('predictions')) {
                 setPastData(data.actual_data);
                 setPredictionData(data.predictions);
             } else {
+                setPastData([]);
+                setPredictionData([]);
                 setNotContent(true);
             }
         }
@@ -109,10 +125,19 @@ const HistoricalProjections = () => {
         if(!!country && !!region && !!selectedDate) {
             fetchData();
         }
-    }, [country, region, selectedDate]);
+    }, [country, region, district, selectedDate]);
 
     const handleChange = (event) => {
+        setSearchBarDistrict('');
+        setSearchBarRegion('');
+        setPastData([]);
+        setPredictionData([]);
         setRegion();
+        setRegions([]);
+        setDistrict();
+        setDistricts([]);
+        setPastData([]);
+        setPredictionData([]);
         setCountry(event.target.value);
     };
 
@@ -167,16 +192,46 @@ const HistoricalProjections = () => {
                                     <Autocomplete
                                         options={regions}
                                         getOptionLabel={(option) => option}
-                                        onInputChange={(event, newInputValue) => {
-                                            setSearchBarRegion(newInputValue);
-                                            if(regions.includes(newInputValue)) {
-                                                setRegion(newInputValue);
+                                        value={region ? region : null}
+                                        inputValue={searchBarRegion}
+                                        onChange={(event, newValue) => {
+                                            if(regions.includes(newValue) || !newValue) {
+                                                setDistrict();
+                                                setDistricts([]);
+                                                setRegion(newValue ? newValue : undefined);
+                                                setPastData([]);
+                                                setPredictionData([]);
                                             }
+                                        }}
+                                        onInputChange={(event, newInputValue) => {
+                                            setSearchBarDistrict('');
+                                            setSearchBarRegion(newInputValue);
+            
                                         }}
                                         style={{ width: 200 }}
                                         renderInput={(params) => <TextField {...params} label={['Russia'].includes(country) ? 'Region' : 'State'} variant="outlined" />}
                                     />
                                 </Grid>
+                                { country === 'India' && districts.length > 0 && 
+                                <Grid>
+                                    <Autocomplete
+                                        options={districts}
+                                        getOptionLabel={(option) => option}
+                                        inputValue={searchBarDistrict}
+                                        value={district ? district : null}
+                                        onChange={(event, newValue) => {
+                                            if(districts.includes(newValue) || !newValue) {
+                                                setDistrict(newValue ? newValue : undefined);
+                                            }
+                                        }}
+                                        onInputChange={(event, newInputValue) => {
+                                            setSearchBarDistrict(newInputValue);
+                                        }}
+                                        style={{ width: 200 }}
+                                        renderInput={(params) => <TextField {...params} label={'District'} variant="outlined" />}
+                                        />
+                                </Grid>
+                                }
                                 <Grid>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
@@ -250,16 +305,16 @@ const HistoricalProjections = () => {
                             />
                             }
                         </Grid>
-                        <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                            <ButtonGroup size="large">
-                                <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
-                                <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
-                                <Button variant={plot === 'Recovered'  ? "recovered" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
-                                <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
-                            </ButtonGroup>
-                        </Grid>
                         </>
                     }
+                    <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <ButtonGroup size="large">
+                            <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
+                            <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                            <Button variant={plot === 'Recovered'  ? "contained" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
+                            <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
+                        </ButtonGroup>
+                    </Grid>
                 </Paper>
             </Grid>
         </Grid>

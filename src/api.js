@@ -8,12 +8,14 @@ const api2 = axios.create({
     baseURL: 'http://52.149.152.176:800'
 });
 
-const getData = async ( date, region, country ) => {
-    return await api2.post(`/get_data/`, {
+const getData = async ( date, country, region) => {
+    const data = {
         date: date.toISOString().split('T')[0],
         region,
         country
-    });
+    };
+
+    return await api2.post(`/get_data/`, data);
 }
 
 const getCountries = async () => {
