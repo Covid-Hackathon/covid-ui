@@ -8,6 +8,11 @@ const api2 = axios.create({
     baseURL: 'http://52.149.152.176:800'
 });
 
+const api3 = axios.create({
+    baseURL: 'http://52.149.152.176:1000'
+});
+
+
 const getData = async ( date, country, region) => {
     const data = {
         date: date.toISOString().split('T')[0],
@@ -70,6 +75,13 @@ const getHeatFactorsRegion = async (country, region) => {
     return await api.get(`/countries/${country}/heatfactors/${region}`);
 }
 
+const getOwnPrediction = async (population, file) => {
+    const data = new FormData();
+    data.append('file', file);
+    data.append('population', population);
+    return api3.post('/upload/', data);
+}
+
 
 export default {
     getCountries,
@@ -83,7 +95,8 @@ export default {
     getPredictionDistrict,
     getHeatFactorsCountry,
     getHeatFactorsRegion,
-    getData
+    getData,
+    getOwnPrediction
 }
 
 // http://52.149.152.176:3000/countries/India/past?district=Ahmednagar

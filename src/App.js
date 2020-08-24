@@ -2,14 +2,15 @@ import React from 'react';
 import Dashboard from './pages/dashboard';
 import AboutTheModel from './pages/about-the-model';
 import MedicalInventory from './pages/medical-inventory';
+import OwnForecast from './pages/own-forecast';
 import MeetTheTeam from './pages/meet-the-team';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-//import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 import {
   BrowserRouter as Router,
@@ -75,6 +76,9 @@ const App = () => {
               <Link to="/historical-projections" className={classes.link}>
                 Historical Projections
               </Link> 
+              <Link to="/own-forecast" className={classes.link}>
+                Own Forecast
+              </Link> 
               <Link to="/medical-inventory" className={classes.link}>
                 Medical Inventory
               </Link>
@@ -96,6 +100,9 @@ const App = () => {
           </Route>
           <Route path='/historical-projections' exact>
             <HistoricalProjections />
+          </Route>
+          <Route path='/own-forecast' exact>
+            <OwnForecast />
           </Route>
           <Route path='/medical-inventory' exact>
             <MedicalInventory />
