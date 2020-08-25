@@ -167,6 +167,11 @@ const HistoricalProjections = () => {
         return country
     }
 
+
+    const disableDays = (date) => {
+        return initDate < date;
+    }
+
     return <Container maxWidth="xl" component="main">
         <Grid container justify='center' style={{padding: '10px', paddingTop: '30px'}}>
             <Grid item xs={12} md={12}>
@@ -255,6 +260,7 @@ const HistoricalProjections = () => {
                                             KeyboardButtonProps={{
                                                 'aria-label': 'change date',
                                             }}
+                                            shouldDisableDate={disableDays} 
                                         />
                                     </MuiPickersUtilsProvider>
                                 </Grid>
