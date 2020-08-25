@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
@@ -9,8 +9,10 @@ import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Modal from '@material-ui/core/Modal';
 
 import { makeStyles } from '@material-ui/core/styles';
+import TableDays from '../components/table-days';
 
 import api from '../api';
 import Plot from '../components/plot';
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
       position: 'absolute',
-      width: '80%',
+      width: '90%',
       backgroundColor: theme.palette.background.paper,
       border: '1px solid #000',
       boxShadow: theme.shadows[5],
@@ -40,6 +42,12 @@ const OwnForecast = () => {
     const [ predictionData, setPredictionData ] = useState([]);
 
     const [ plot, setPlot ] = useState('Confirmed');
+
+    const [ open, setOpen ] = useState(false);
+
+    const handleOpen = (state) => {
+        setOpen(state);
+    };
 
     const plotHandler = (plot) => {
         setPlot(plot);
@@ -80,8 +88,8 @@ const OwnForecast = () => {
                 </Paper>
             </Grid>
         </Grid>
-        <Grid container justify='center' style={{padding: '10px'}} >
-            <Grid item xs={12} md={12}>
+        <Grid container justify='center' >
+            <Grid item xs={12} md={12} style={{padding: '10px'}}>
                 <Paper>
                     <Grid item>
                         <FormControl variant="outlined" className={classes.formControl}>
@@ -166,14 +174,63 @@ const OwnForecast = () => {
                         />
                         }
                     </Grid>
-                    <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <ButtonGroup size="large">
-                            <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
-                            <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
-                            <Button variant={plot === 'Recovered'  ? "contained" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
-                            <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
-                        </ButtonGroup>
-                    </Grid>
+                    {
+                        predictionData.length > 0 &&
+                        <>
+                            <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                <ButtonGroup size="large">
+                                    <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
+                                    <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                                    <Button variant={plot === 'Recovered'  ? "contained" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
+                                    <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
+                                </ButtonGroup>
+                            </Grid>
+                            <Grid item xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpen.bind(this, true)}>
+                                    See the Complete Forecast!
+                                </Button>
+                                <Modal
+                                open={open}
+                                onClose={handleOpen.bind(this, false)}
+                                >
+                                    <Grid style={{top: `50%`, left: `50%`, transform: `translate(-50%, -50%)`}} className={classes.paper}>
+                                        <Grid container>
+                                            <Grid item xs={12} style={{padding: '5px'}}>
+                                                <Paper>
+                                                    <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                                                        Forecast (next 21 days)
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid container>
+                                        <Grid item xs={4} md={4} style={{padding: '5px'}}>
+                                            <TableDays data={predictionData.slice(0, 7)} />
+                                        </Grid>
+                                        <Grid item xs={4} md={4} style={{padding: '5px'}}>
+                                            <TableDays data={predictionData.slice(7, 14)} />
+                                        </Grid>
+                                        <Grid item xs={4} md={4} style={{padding: '5px'}}>
+                                            <TableDays data={predictionData.slice(14)} />
+                                        </Grid>
+                                        </Grid>
+                                        <Grid>
+                                        <Grid item xs={6} style={{padding: '5px'}}>
+                                            <Typography component="p" variant="body2" align="left" color="textPrimary">
+                                            Note: These values are cumulative
+                                            </Typography>
+                                        </Grid>
+                                        <Grid container alignItems="flex-start" justify="flex-end" direction="row">
+                                            <Button size="large" variant={"contained"} color={"primary"} onClick={handleOpen.bind(this, false)}>
+                                            Close
+                                            </Button>
+                                        </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Modal>
+                            </Grid>
+                        </>
+                    }
                 </Paper>
             </Grid>
         </Grid>
