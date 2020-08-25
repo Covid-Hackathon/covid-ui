@@ -449,7 +449,7 @@ const Dashboard = () => {
                   </Grid>
                   <Grid item xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpen.bind(this, true)}>
-                        See the Complete Forecast!
+                      See the Forecasts!
                     </Button>
                     <Modal
                       open={open}
