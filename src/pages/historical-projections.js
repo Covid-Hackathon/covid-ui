@@ -71,8 +71,6 @@ const HistoricalProjections = () => {
 
     const [ notContent, setNotContent ] = useState(false);
 
-    
-
     useEffect(() => {
         const fetchGlobalData = async () => {
           try {
@@ -320,14 +318,17 @@ const HistoricalProjections = () => {
                         </Grid>
                         </>
                     }
-                    <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <ButtonGroup size="large">
-                            <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
-                            <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
-                            <Button variant={plot === 'Recovered'  ? "contained" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
-                            <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
-                        </ButtonGroup>
-                    </Grid>
+                    {
+                        predictionData.length > 0 && 
+                        <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <ButtonGroup size="large">
+                                <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
+                                <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
+                                <Button variant={plot === 'Recovered'  ? "contained" : "outlined"} color={plot === 'Recovered' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Recovered')}>Recovered</Button>
+                                <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
+                            </ButtonGroup>
+                        </Grid>
+                    }
                 </Paper>
             </Grid>
         </Grid>
