@@ -22,8 +22,6 @@ import TableDays from '../components/table-days';
 import Loading from '../components/loading';
 import Plot from '../components/plot';
 
-
-
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -498,7 +496,7 @@ const Dashboard = () => {
                         </Grid>
                         <Grid>
                           <Grid item xs={6} style={{padding: '5px'}}>
-                            <Typography component="p" variant="p" align="left" color="textPrimary">
+                            <Typography component="p" variant="body2" align="left" color="textPrimary">
                               Note: These values are cumulative
                             </Typography>
                           </Grid>
