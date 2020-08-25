@@ -17,12 +17,17 @@ const CustomizedPlot = (props) => {
     const pastY = pastData.map((datum) => {
         return datum[type];
     });
-    const predictionX = predictionData.map((datum) => {
+    let predictionX = predictionData.map((datum) => {
         return datum.date;
     });
-    const predictionY = predictionData.map((datum) => {
+    let predictionY = predictionData.map((datum) => {
         return datum[type]
     });
+
+    if(pastData.length > 0 && predictionData.length > 0 && (pastData[pastData.length - 1].date !== predictionData[0].date)) {
+        predictionX = [pastX[pastX.length - 1], ...predictionX];
+        predictionY = [pastY[pastY.length - 1], ...predictionY];
+    }
 
     return <Plot
         data={[
