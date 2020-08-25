@@ -63,7 +63,7 @@ const Dashboard = () => {
   const [ , setSearchBarDistrict] = useState(null); 
   const [ heatFactorData, setHeatFactorData ] = useState({});
 
-  const [ plot, setPlot ] = useState('Active');
+  const [ plot, setPlot ] = useState('Confirmed');
   const [ open, setOpen ] = useState(false);
   const [ notContent, setNotContent ] = useState(false);
 
@@ -440,10 +440,10 @@ const Dashboard = () => {
                   </Grid>
                   <Grid item xs={12} style={{padding: '20px', paddingTop:'40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                       <ButtonGroup size="large">
+                        <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
                         {
                           country !== 'US' && <Button variant={plot === 'Active'  ? "contained" : "outlined"} color={plot === 'Active' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Active')}>Active</Button>
                         }
-                        <Button variant={plot === 'Confirmed'  ? "contained" : "outlined"} color={plot === 'Confirmed' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Confirmed')}>Confirmed</Button>
                         <Button variant={plot === 'Deceased'  ? "contained" : "outlined"} color={plot === 'Deceased' ? "primary" : "default"} onClick={plotHandler.bind(this, 'Deceased')}>Deceased</Button>
                       </ButtonGroup>
                   </Grid>
