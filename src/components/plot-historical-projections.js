@@ -1,6 +1,9 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 
+const initDate = new Date();
+initDate.setDate(initDate.getDate()-1);
+
 const CustomizedPlot = (props) => {
     const {
         title,
@@ -8,7 +11,8 @@ const CustomizedPlot = (props) => {
         predictionColor,
         pastData,
         predictionData,
-        type
+        type,
+        selectedDate
     } = props;
 
     const pastX = pastData.map((datum) => {
@@ -24,7 +28,7 @@ const CustomizedPlot = (props) => {
         return datum[type]
     });
 
-    if(pastData.length > 0 && predictionData.length > 0 && (pastData[pastData.length - 1].date !== predictionData[0].date)) {
+    if( pastData.length > 0 && predictionData.length > 0 && selectedDate.getDate() === initDate.getDate() ) {
         predictionX = [pastX[pastX.length - 1], ...predictionX];
         predictionY = [pastY[pastY.length - 1], ...predictionY];
     }

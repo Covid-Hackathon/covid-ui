@@ -62,7 +62,7 @@ const HistoricalProjections = () => {
     const [ pastData, setPastData ] = useState([]);
     const [ predictionData, setPredictionData ] = useState([]);
   
-    const [selectedDate, setSelectedDate] = React.useState(initDate);
+    const [ selectedDate, setSelectedDate ] = React.useState(initDate);
 
     const [ searchBarRegion, setSearchBarRegion ] = useState(''); 
     const [ searchBarDistrict, setSearchBarDistrict] = useState(''); 
@@ -280,6 +280,7 @@ const HistoricalProjections = () => {
                                 predictionColor="orange" 
                                 pastData={pastData} 
                                 predictionData={predictionData} 
+                                selectedDate={selectedDate}
                             />
                             }
                             {
@@ -290,7 +291,8 @@ const HistoricalProjections = () => {
                                 pastColor="blue" 
                                 predictionColor="orange" 
                                 pastData={pastData} 
-                                predictionData={predictionData} 
+                                predictionData={predictionData}
+                                selectedDate={selectedDate}
                             />
                             }
                             {
@@ -301,7 +303,8 @@ const HistoricalProjections = () => {
                                 pastColor="blue" 
                                 predictionColor="orange" 
                                 pastData={pastData} 
-                                predictionData={predictionData} 
+                                predictionData={predictionData}
+                                selectedDate={selectedDate}
                             />
                             }
                             {
@@ -312,7 +315,8 @@ const HistoricalProjections = () => {
                                 pastColor="blue" 
                                 predictionColor="orange" 
                                 pastData={pastData} 
-                                predictionData={predictionData} 
+                                predictionData={predictionData}
+                                selectedDate={selectedDate}
                             />
                             }
                         </Grid>
