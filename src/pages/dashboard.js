@@ -147,7 +147,7 @@ const Dashboard = () => {
 
     
     setPlot('Confirmed');
-    
+
     fetchData();
   }, [country]);
 
@@ -172,114 +172,140 @@ const Dashboard = () => {
 
   useEffect(() => {
     setLoaded(false);
+    setNotContent(false);
     const fetchData = async () => {
       if(district) {
-
-        let pastData = (await api.getPastDistrict(country, region, district)).data;
-        pastData = Array.isArray(pastData) ? pastData : [];
-        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
-
-        let predictionData = Object.values((await api.getPredictionDistrict(country, region, district)).data)[0];
-        if(Array.isArray(predictionData) && predictionData.length > 0) {
-          predictionData = predictionData
-          .reduce((accumulator, currentValue) => {
-            const week = +Object.keys(currentValue)[0].split('-')[1];
-            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
-              return {
-                ...day,
-                week
-              }
-            });
-            return [...accumulator, ...days];
-          }, []);   
-        } else {
-          predictionData = [];
-        }
-
-        const insights = (await api.getInsights(country, region, district)).data;
-
-        if(pastData.length === 0 || predictionData.length === 0){
+        try {
+          let pastData = (await api.getPastDistrict(country, region, district)).data;
+          pastData = Array.isArray(pastData) ? pastData : [];
+          pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+  
+          let predictionData = Object.values((await api.getPredictionDistrict(country, region, district)).data)[0];
+          if(Array.isArray(predictionData) && predictionData.length > 0) {
+            predictionData = predictionData
+            .reduce((accumulator, currentValue) => {
+              const week = +Object.keys(currentValue)[0].split('-')[1];
+              const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+                return {
+                  ...day,
+                  week
+                }
+              });
+              return [...accumulator, ...days];
+            }, []);   
+          } else {
+            predictionData = [];
+          }
+  
+          const insights = (await api.getInsights(country, region, district)).data;
+  
+          if(pastData.length === 0 || predictionData.length === 0){
+            setNotContent(true);
+          } else {
+            setNotContent(false);
+          }
+  
+          setInsights(insights);
+          setPastData(pastData);
+          setPredictionData(predictionData);
+          setLoaded(true); 
+        } catch {
+          setInsights({});
+          setPastData([]);
+          setPredictionData([]);
           setNotContent(true);
-        } else {
-          setNotContent(false);
+          setLoaded(true); 
         }
-
-        setInsights(insights);
-        setPastData(pastData);
-        setPredictionData(predictionData);
-        setLoaded(true);
       } else if (region) {
+        try {
+          let pastData = (await api.getPastRegion(country, region)).data;
+          pastData = Array.isArray(pastData) ? pastData : [];
+          pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+  
+          let predictionData = Object.values((await api.getPredictionRegion(country, region)).data)[0];
+          if(Array.isArray(predictionData) && predictionData.length > 0) {
+            predictionData = predictionData
+            .reduce((accumulator, currentValue) => {
+              const week = +Object.keys(currentValue)[0].split('-')[1];
+              const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+                return {
+                  ...day,
+                  week
+                }
+              });
+              return [...accumulator, ...days];
+            }, []);   
+          } else {
+            predictionData = [];
+          }
+  
+          const insights = (await api.getInsights(country, region)).data;
+  
+          if(pastData.length === 0 || predictionData.length === 0){
+            setNotContent(true);
+          } else {
+            setNotContent(false);
+          }
 
-        let pastData = (await api.getPastRegion(country, region)).data;
-        pastData = Array.isArray(pastData) ? pastData : [];
-        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
-
-        let predictionData = Object.values((await api.getPredictionRegion(country, region)).data)[0];
-        if(Array.isArray(predictionData) && predictionData.length > 0) {
-          predictionData = predictionData
-          .reduce((accumulator, currentValue) => {
-            const week = +Object.keys(currentValue)[0].split('-')[1];
-            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
-              return {
-                ...day,
-                week
-              }
-            });
-            return [...accumulator, ...days];
-          }, []);   
-        } else {
-          predictionData = [];
-        }
-
-        const insights = (await api.getInsights(country, region)).data;
-
-        if(pastData.length === 0 || predictionData.length === 0){
+          const districts = (await api.getDistricts(country, region)).data;
+  
+          setInsights(insights);
+          setDistricts(districts);
+          setPastData(pastData);
+          setPredictionData(predictionData);
+          setLoaded(true);
+        } catch {
           setNotContent(true);
-        } else {
-          setNotContent(false);
+          setInsights({});
+          setDistricts([]);
+          setPastData([]);
+          setPredictionData([]);
+          setLoaded(true);
         }
-
-        setInsights(insights);
-        setDistricts((await api.getDistricts(country, region)).data);
-        setPastData(pastData);
-        setPredictionData(predictionData);
-        setLoaded(true);
       } else {
-        let pastData = (await api.getPastCountry(country)).data;
-        pastData = Array.isArray(pastData) ? pastData : [];
-        pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
-
-        let predictionData = Object.values((await api.getPredictionCountry(country)).data)[0];
-        if(Array.isArray(predictionData) && predictionData.length > 0) {
-          predictionData = predictionData
-          .reduce((accumulator, currentValue) => {
-            const week = +Object.keys(currentValue)[0].split('-')[1];
-            const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
-              return {
-                ...day,
-                week
-              }
-            });
-            return [...accumulator, ...days];
-          }, []);   
-        } else {
-          predictionData = [];
-        }
-
-        const insights = (await api.getInsights(country)).data;
-
-        if(pastData.length === 0 || predictionData.length === 0){
+        try {
+          let pastData = (await api.getPastCountry(country)).data;
+          pastData = Array.isArray(pastData) ? pastData : [];
+          pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
+  
+          let predictionData = Object.values((await api.getPredictionCountry(country)).data)[0];
+          if(Array.isArray(predictionData) && predictionData.length > 0) {
+            predictionData = predictionData
+            .reduce((accumulator, currentValue) => {
+              const week = +Object.keys(currentValue)[0].split('-')[1];
+              const days = Object.values(Object.values(currentValue)[0])[0].map(day => {
+                return {
+                  ...day,
+                  week
+                }
+              });
+              return [...accumulator, ...days];
+            }, []);   
+          } else {
+            predictionData = [];
+          }
+  
+          const insights = (await api.getInsights(country)).data;
+  
+          if(pastData.length === 0 || predictionData.length === 0){
+            setNotContent(true);
+          } else {
+            setNotContent(false);
+          }
+  
+          setInsights(insights);
+          setPastData(pastData);
+          setPredictionData(predictionData);
+          setDistricts([]);
+          setLoaded(true);
+        } catch {
           setNotContent(true);
-        } else {
-          setNotContent(false);
+          setInsights({});
+          setPastData([]);
+          setPredictionData([]);
+          setDistricts([]);
+          setLoaded(true);
         }
-
-        setInsights(insights);
-        setPastData(pastData);
-        setPredictionData(predictionData);
-        setDistricts([]);
-        
-        setLoaded(true);
       }
     }
 
