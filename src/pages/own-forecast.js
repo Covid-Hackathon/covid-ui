@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Link from '@material-ui/core/Link';
 import Modal from '@material-ui/core/Modal';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -89,12 +90,20 @@ const OwnForecast = () => {
             </Grid>
         </Grid>
         <Grid container justify='center' >
-            <Grid item xs={12} md={12} style={{padding: '10px'}}>
+            <Grid item xs={12} md={12} style={{padding: '5px'}}>
                 <Paper>
                     <Grid item>
                         <FormControl variant="outlined" className={classes.formControl}>
                             <Grid container>
+                                <Button 
+                                    style={{margin: '5px'}}
+                                    variant="contained"
+                                    color="primary"
+                                    href="/template.csv">
+                                    Download Template
+                                </Button>
                                 <Button
+                                    style={{margin: '5px'}}
                                     variant="contained"
                                     component="label"
                                     color="primary"
@@ -107,6 +116,7 @@ const OwnForecast = () => {
                                     />
                                 </Button>
                                 <TextField 
+                                    style={{margin: '5px'}}
                                     type="number"
                                     inputProps={{ min: "1" }}
                                     label="Population" 
@@ -116,6 +126,7 @@ const OwnForecast = () => {
                                 {
                                     population && file &&
                                     <Button
+                                        style={{margin: '5px'}}
                                         variant="contained"
                                         component="label"
                                         color="primary"
