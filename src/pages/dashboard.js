@@ -19,6 +19,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import api from '../api';
 import Map from '../components/map';
 import TableDays from '../components/table-days';
+import TableInsights from '../components/table-insights';
 import Loading from '../components/loading';
 import Plot from '../components/plot';
 
@@ -40,6 +41,14 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  paper2: {
+    position: 'absolute',
+    width: '60%',
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  }
 }));
 
 const Dashboard = () => {
@@ -62,9 +71,11 @@ const Dashboard = () => {
   const [ , setSearchBarRegion ] = useState(null); 
   const [ , setSearchBarDistrict] = useState(null); 
   const [ heatFactorData, setHeatFactorData ] = useState({});
+  const [ insights, setInsights ] = useState({});
 
   const [ plot, setPlot ] = useState('Confirmed');
-  const [ open, setOpen ] = useState(false);
+  const [ openForecast, setOpenForecast ] = useState(false);
+  const [ openInsights, setOpenInsights ] = useState(false);
   const [ notContent, setNotContent ] = useState(false);
 
   const handleChange = (event) => {
@@ -103,12 +114,15 @@ const Dashboard = () => {
           predictionData = [];
         }
 
+        const insights = (await api.getInsights(country)).data;
+
         if(pastData.length === 0 || predictionData.length === 0){
           setNotContent(true);
         } else {
           setNotContent(false);
         }
 
+        setInsights(insights);
         setCountries(['India', 'US', 'Russia']);
         setRegions(regions);
         setPastData(pastData);
@@ -150,6 +164,7 @@ const Dashboard = () => {
           result = await api.getHeatFactorsCountry(country);
         }
         const heatFactor = result.data.hasOwnProperty('heatFactors') ? result.data.heatFactors : result.data;
+        console.log(heatFactor);
         setHeatFactorData(heatFactor);
       }
     }
@@ -161,6 +176,7 @@ const Dashboard = () => {
     setLoaded(false);
     const fetchData = async () => {
       if(district) {
+
         let pastData = (await api.getPastDistrict(country, region, district)).data;
         pastData = Array.isArray(pastData) ? pastData : [];
         pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
@@ -182,16 +198,20 @@ const Dashboard = () => {
           predictionData = [];
         }
 
+        const insights = (await api.getInsights(country, region, district)).data;
+
         if(pastData.length === 0 || predictionData.length === 0){
           setNotContent(true);
         } else {
           setNotContent(false);
         }
 
+        setInsights(insights);
         setPastData(pastData);
         setPredictionData(predictionData);
         setLoaded(true);
       } else if (region) {
+
         let pastData = (await api.getPastRegion(country, region)).data;
         pastData = Array.isArray(pastData) ? pastData : [];
         pastData = pastData.filter((value, index, self) => self.map(item => item.date).indexOf(value.date) === index);
@@ -213,12 +233,15 @@ const Dashboard = () => {
           predictionData = [];
         }
 
+        const insights = (await api.getInsights(country, region)).data;
+
         if(pastData.length === 0 || predictionData.length === 0){
           setNotContent(true);
         } else {
           setNotContent(false);
         }
 
+        setInsights(insights);
         setDistricts((await api.getDistricts(country, region)).data);
         setPastData(pastData);
         setPredictionData(predictionData);
@@ -245,12 +268,15 @@ const Dashboard = () => {
           predictionData = [];
         }
 
+        const insights = (await api.getInsights(country)).data;
+
         if(pastData.length === 0 || predictionData.length === 0){
           setNotContent(true);
         } else {
           setNotContent(false);
         }
 
+        setInsights(insights);
         setPastData(pastData);
         setPredictionData(predictionData);
         setDistricts([]);
@@ -275,8 +301,12 @@ const Dashboard = () => {
     setPlot(plot);
   }
 
-  const handleOpen = (state) => {
-    setOpen(state);
+  const handleOpenForecast = (state) => {
+    setOpenForecast(state);
+  };
+
+  const handleOpenInsights = (state) => {
+    setOpenInsights(state);
   };
 
   const title = () => {
@@ -448,12 +478,17 @@ const Dashboard = () => {
                       </ButtonGroup>
                   </Grid>
                   <Grid item xs={12} style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                    <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpen.bind(this, true)}>
-                      See the Forecasts!
-                    </Button>
+                    <ButtonGroup size="large">
+                      <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpenForecast.bind(this, true)}>
+                        See the Forecasts!
+                      </Button>
+                      <Button size="large" variant={"outlined"} color={"primary"} onClick={handleOpenInsights.bind(this, true)}>
+                        Insights
+                      </Button>
+                    </ButtonGroup>
                     <Modal
-                      open={open}
-                      onClose={handleOpen.bind(this, false)}
+                      open={openForecast}
+                      onClose={handleOpenForecast.bind(this, false)}
                     >
                       <Grid style={{top: `50%`, left: `50%`, transform: `translate(-50%, -50%)`}} className={classes.paper}>
                         <Grid container>
@@ -495,13 +530,47 @@ const Dashboard = () => {
                           </Grid>
                         </Grid>
                         <Grid>
-                          <Grid item xs={6} style={{padding: '5px'}}>
+                          <Grid item xs={12} style={{padding: '5px'}}>
                             <Typography component="p" variant="body2" align="left" color="textPrimary">
                               Note: These values are cumulative
                             </Typography>
                           </Grid>
                           <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-                            <Button size="large" variant={"contained"} color={"primary"} onClick={handleOpen.bind(this, false)}>
+                            <Button size="large" variant={"contained"} color={"primary"} onClick={handleOpenForecast.bind(this, false)}>
+                              Close
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Modal>
+                    <Modal
+                      open={openInsights}
+                      onClose={handleOpenInsights.bind(this, false)}
+                    >
+                      <Grid style={{top: `50%`, left: `50%`, transform: `translate(-50%, -50%)`}} className={classes.paper2}>
+                        <Grid container>
+                          <Grid item xs={12} md={12}>
+                            <Grid item xs={12} style={{padding: '5px'}}>
+                              <Paper>
+                                <Typography component="h1" variant="h5" align="center" color="textPrimary">
+                                  Insights
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                            <Grid item xs={12} style={{padding: '5px'}}>
+                              <TableInsights  insights={insights} />
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                        <Grid>
+                          <Grid item xs={12} style={{padding: '5px'}}>
+                            <Typography component="p" variant="body2" align="left" color="textPrimary">
+                              CFR - Case Fatality Ratio, IFR - Infection fatality ratio
+                            </Typography>
+                            <a href="https://www.who.int/news-room/commentaries/detail/estimating-mortality-from-covid-19">https://www.who.int/news-room/commentaries/detail/estimating-mortality-from-covid-19</a>
+                          </Grid>
+                          <Grid container alignItems="flex-start" justify="flex-end" direction="row">
+                            <Button size="large" variant={"contained"} color={"primary"} onClick={handleOpenInsights.bind(this, false)}>
                               Close
                             </Button>
                           </Grid>
