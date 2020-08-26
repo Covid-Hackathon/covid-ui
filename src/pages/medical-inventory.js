@@ -132,19 +132,19 @@ const MedicalInventory = () => {
                             <TableBody>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-14</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">61411</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">644570</StyledTableCell>
                                     <StyledTableCell align="center" component="th" scope="row">43179</StyledTableCell>
                                     <StyledTableCell align="center" component="th" scope="row">21590</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-21</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">63376</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">707947</StyledTableCell>
                                     <StyledTableCell align="center" component="th" scope="row">42847</StyledTableCell>
                                     <StyledTableCell align="center" component="th" scope="row">21424</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-28</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">65750</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">773697</StyledTableCell>
                                     <StyledTableCell align="center" component="th" scope="row">43085</StyledTableCell>
                                     <StyledTableCell align="center" component="th" scope="row">21543</StyledTableCell>
                                 </StyledTableRow>
