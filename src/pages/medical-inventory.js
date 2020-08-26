@@ -132,9 +132,9 @@ const MedicalInventory = () => {
                             <TableBody>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-14</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">61411</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">43179</StyledTableCell>
-                                    <StyledTableCell align="center" component="th" scope="row">21590</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">644570</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">707947</StyledTableCell>
+                                    <StyledTableCell align="center" component="th" scope="row">773697</StyledTableCell>
                                 </StyledTableRow>
                                 <StyledTableRow>
                                     <StyledTableCell align="center" component="th" scope="row">2020-08-21</StyledTableCell>
