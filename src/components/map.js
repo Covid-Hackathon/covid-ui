@@ -74,7 +74,7 @@ const Map = (props) => {
                     .translate(t);
             }
             
-             function drawStates(g, data, objectName){
+             function drawStates(g, data, objectName, tooltip){
                 const states = g.selectAll(".state")
                     .data(topojson.feature(data, data.objects[objectName]).features)
                     .enter().append("path")
@@ -113,10 +113,19 @@ const Map = (props) => {
                             }
                         }
                     })
-                    .on("mouseover", function (item) {
+                    .on("mouseover", function (item) { 
                         if(d3.select(this).style("fill") !== 'darkorange') {
                             d3.select(this).attr("r", 10).style("fill", "grey");
                         }
+                        return tooltip
+                        .style("opacity", 1)  
+                        .html(item.properties[propertyName]);
+                    })
+                    .on("mousemove",function(item) {
+                        tooltip.classed("hidden", false)
+                       .style("top", (d3.event.pageY) + "px")
+                       .style("left", (d3.event.pageX + 10) + "px")
+                       .html(item.properties[propertyName]);
                     })
                     .on("mouseout", function (item) {
                         if(d3.select(this).style("fill") !== 'darkorange') {
@@ -128,8 +137,8 @@ const Map = (props) => {
                             } 
                             d3.select(this).attr("r", 10).style("fill", currentColor);
                         }
+                        tooltip.style("opacity", 0);
                     });
-          
                 return states;
             }
             
@@ -146,16 +155,23 @@ const Map = (props) => {
               .append("svg")
               .attr("id", "map")
               .attr("viewBox", [0, 0, w, h]);
+
+            d3.selectAll(".tooltip").remove();
+            const tooltip = d3.select(mapRef.current)
+                .append("div")
+                .attr("class", "tooltip");
     
             const g = svg.append("g");
             centerZoom(mapJson, objectName, projection, path, w, h);
-            drawStates(g, mapJson, objectName);
+            drawStates(g, mapJson, objectName, tooltip);
         }
 
         drawMap();
     }, [country, region, district, heatFactors]);
 
-    return <div ref={mapRef} style={{position: 'relative', width: '100%', height:'100%'}}></div>
+    return <>
+        <div ref={mapRef} style={{width: '100%', height:'100%'}}></div>
+    </>;
 }
 
 export default Map;
