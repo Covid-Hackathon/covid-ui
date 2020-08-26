@@ -145,11 +145,9 @@ const Dashboard = () => {
       setHeatFactorData(heatFactor);
     }
 
-    if(country === 'US') {
-      setPlot('Confirmed');
-    } else {
-      setPlot('Active');
-    }
+    
+    setPlot('Confirmed');
+    
     fetchData();
   }, [country]);
 
