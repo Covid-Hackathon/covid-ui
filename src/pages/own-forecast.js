@@ -83,7 +83,7 @@ const OwnForecast = () => {
             <Grid item xs={12} md={12}>
                 <Paper>
                     <Typography component="h4" variant="h4" align="center" color="textPrimary">
-                        Forecast on your own Data
+                        Forecasting Tool
                     </Typography>
                 </Paper>
             </Grid>

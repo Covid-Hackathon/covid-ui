@@ -73,8 +73,8 @@ const App = () => {
               <Link to="/historical-projections" className={classes.link}>
                 Historical Projections
               </Link> 
-              <Link to="/own-forecast" className={classes.link}>
-                Own Forecast
+              <Link to="/forecasting-tool" className={classes.link}>
+                Forecasting Tool
               </Link> 
               <Link to="/medical-inventory" className={classes.link}>
                 Medical Inventory
@@ -95,7 +95,7 @@ const App = () => {
           <Route path='/historical-projections' exact>
             <HistoricalProjections />
           </Route>
-          <Route path='/own-forecast' exact>
+          <Route path='/forecasting-tool' exact>
             <OwnForecast />
           </Route>
           <Route path='/medical-inventory' exact>
